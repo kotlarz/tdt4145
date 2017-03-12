@@ -12,39 +12,10 @@ import java.time.LocalTime;
 import java.util.*;
 import java.util.logging.Logger;
 
+import static treningsdagbok.utils.JavaUtils.stringToSnakeCase;
+
 public class DataUtils {
     private static final Logger LOGGER = Logger.getLogger(TreningsDagbok.class.getName());
-
-    /**
-     * Formats the string as a snake_case by inserting a underscore
-     * before every capitalized character and lower-casing every character.
-     * Example:
-     * - TreningsMalTilhorlighet => trenings_mal_tilhorlighet
-     * - InnendorsTrenings => innendors_trening
-     * - antallTilskuere => antall_tilskuere
-     *
-     * @param name The String that we want to format.
-     * @return A snake_case formatted string.
-     */
-    private static String formatDatabaseName(String name) {
-        // Initialize the new String.
-        String newName = "";
-
-        // Loop through all the characters in the String.
-        for (int i = 0; i < name.length(); i++) {
-            // Is the current character capitalized?
-            if (i > 0 && Character.isUpperCase(name.charAt(i))) {
-                // Prefix the character with an underscore if so.
-                newName += "_";
-            }
-
-            // Append the current character to the new String.
-            newName += Character.toLowerCase(name.charAt(i));
-        }
-
-        // Return the formatted name.
-        return newName;
-    }
 
     /**
      * Generates a INSERT SQL query for a PreparedStatement.
@@ -54,7 +25,7 @@ public class DataUtils {
      */
     private static String generateInsertQuery(Class tableClass) {
         // Generate a snake_case string for the table name.
-        String tableName = formatDatabaseName(tableClass.getSimpleName());
+        String tableName = stringToSnakeCase(tableClass.getSimpleName());
 
         // Initialize the INSERT SQL query.
         String insertQuery = "INSERT INTO `" + tableName + "` (";
@@ -75,7 +46,7 @@ public class DataUtils {
             TableColumn column = entry.getValue();
 
             // Generate a snake_case string for the table field.
-            String name = formatDatabaseName(field.getName());
+            String name = stringToSnakeCase(field.getName());
 
             // Is the TableColumn the last one in the array?
             boolean isLast = i++ != fieldAnnotations.size();
@@ -187,7 +158,7 @@ public class DataUtils {
         List<String> primaryKeys = new ArrayList<>();
 
         // Generate a snake_case String for the table name.
-        String tableName = formatDatabaseName(tableClass.getSimpleName());
+        String tableName = stringToSnakeCase(tableClass.getSimpleName());
 
         // Initialize the CREATE TABLE SQL query.
         String tableSchema = "CREATE TABLE `" + tableName + "` (\n";
@@ -199,7 +170,7 @@ public class DataUtils {
             TableColumn column = entry.getValue();
 
             // Generate a snake_case String for the table field.
-            String name = formatDatabaseName(field.getName());
+            String name = stringToSnakeCase(field.getName());
 
             // Set the data type of the database field (String, int, etc.).
             Class fieldType = field.getType();

@@ -6,7 +6,6 @@ import treningsdagbok.annotations.TableColumn;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -37,35 +36,34 @@ public class JavaUtils {
         return annotations;
     }
 
-    /*
-    public static Object runGetter(Field field, Object o)
-    {
-        // MZ: Find the correct method
-        for (Method method : o.getMethods())
-        {
-            if ((method.getName().startsWith("get")) && (method.getName().length() == (field.getName().length() + 3)))
-            {
-                if (method.getName().toLowerCase().endsWith(field.getName().toLowerCase()))
-                {
-                    // MZ: Method found, run it
-                    try
-                    {
-                        return method.invoke(o);
-                    }
-                    catch (IllegalAccessException e)
-                    {
-                        LOGGER.("Could not determine method: " + method.getName());
-                    }
-                    catch (InvocationTargetException e)
-                    {
-                        Logger.fatal("Could not determine method: " + method.getName());
-                    }
+    /**
+     * Formats the string as a snake_case by inserting a underscore
+     * before every capitalized character and lower-casing every character.
+     * Example:
+     * - TreningsMalTilhorlighet => trenings_mal_tilhorlighet
+     * - InnendorsTrenings => innendors_trening
+     * - antallTilskuere => antall_tilskuere
+     *
+     * @param string The String that we want to format.
+     * @return A snake_case formatted string.
+     */
+    public static String stringToSnakeCase(String string) {
+        // Initialize the new String.
+        String snakeCase = "";
 
-                }
+        // Loop through all the characters in the String.
+        for (int i = 0; i < string.length(); i++) {
+            // Is the current character capitalized?
+            if (i > 0 && Character.isUpperCase(string.charAt(i))) {
+                // Prefix the character with an underscore if so.
+                snakeCase += "_";
             }
+
+            // Append the current character to the new String.
+            snakeCase += Character.toLowerCase(string.charAt(i));
         }
 
-
-        return null;
-    }*/
+        // Return the formatted string.
+        return snakeCase;
+    }
 }
