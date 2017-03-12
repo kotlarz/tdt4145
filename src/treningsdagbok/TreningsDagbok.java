@@ -20,9 +20,6 @@ public class TreningsDagbok {
         dataManager = new DataManager("localhost", "treningsdagbok");
         dataManager.connect("treningsdagbok", "treningsdagbok");
         LOGGER.info("Hello world!");
-        //LOGGER.info(TreningsOkt.generateDatabaseSchema());
-
-        //launch(args);
         try {
             dropDatabase();
             createDatabase();
@@ -83,12 +80,9 @@ public class TreningsDagbok {
         );
         try {
             treningsOkt.create();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
+        } catch (SQLException | IllegalAccessException e) {
             e.printStackTrace();
         }
-        // TreningsOkt
 
     }
 }

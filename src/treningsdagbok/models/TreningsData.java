@@ -2,11 +2,15 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataUtils;
+import treningsdagbok.interfaces.DataTable;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 
 @Table
-public class TreningsData {
+public class TreningsData implements DataTable {
     @TableColumn(length = 6, foreignKey={"trenings_okt", "id"})
     private int treningsOktId;
 
@@ -74,5 +78,11 @@ public class TreningsData {
 
     public void setMoh(int moh) {
         this.moh = moh;
+    }
+
+    @Override
+    public void create() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        ps.executeUpdate();
     }
 }

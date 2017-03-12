@@ -2,15 +2,19 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataUtils;
 import treningsdagbok.enums.VaerType;
+import treningsdagbok.interfaces.DataTable;
 
 import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Table
-public class UtendorsTrening extends TreningsOkt {
+public class UtendorsTrening extends TreningsOkt implements DataTable {
     @TableColumn(length = 6, foreignKey={"trenings_okt", "id"})
     private int treningsOktId;
 
@@ -45,5 +49,13 @@ public class UtendorsTrening extends TreningsOkt {
 
     public void setVaerType(VaerType vaerType) {
         this.vaerType = vaerType;
+    }
+
+    @Override
+    public void create() throws SQLException, IllegalAccessException {
+        super.create();
+        this.treningsOktId = super.getId();
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        ps.executeUpdate();
     }
 }

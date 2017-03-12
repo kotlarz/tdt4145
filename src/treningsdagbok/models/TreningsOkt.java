@@ -4,6 +4,7 @@ import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.interfaces.DataTable;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -12,7 +13,7 @@ import java.time.ZoneId;
 import java.util.logging.Logger;
 
 @Table
-public class TreningsOkt {
+public class TreningsOkt implements DataTable {
     private static final Logger LOGGER = Logger.getLogger(TreningsOkt.class.getName());
 
     @TableColumn(length = 6, primaryKey = true, autoIncrement = true)

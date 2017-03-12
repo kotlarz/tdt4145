@@ -1,16 +1,16 @@
 package treningsdagbok.models;
 
-import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.interfaces.DataTable;
 
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Table
-public class InnendorsTrening extends TreningsOkt {
+public class InnendorsTrening extends TreningsOkt implements DataTable {
     @TableColumn(length = 6, foreignKey = {"trenings_okt", "id"})
     private int treningsOktId;
 

@@ -2,9 +2,14 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataUtils;
+import treningsdagbok.interfaces.DataTable;
+
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 @Table
-public class OvelseTilhorlighet {
+public class OvelseTilhorlighet implements DataTable {
     @TableColumn(length = 6, foreignKey = {"trenings_okt", "id"})
     private int treningsOktId;
 
@@ -30,5 +35,11 @@ public class OvelseTilhorlighet {
 
     public void setOvelseId(int ovelseId) {
         this.ovelseId = ovelseId;
+    }
+
+    @Override
+    public void create() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        ps.executeUpdate();
     }
 }

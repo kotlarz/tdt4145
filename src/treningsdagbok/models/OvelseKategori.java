@@ -2,9 +2,15 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataUtils;
+import treningsdagbok.interfaces.DataTable;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 
 @Table
-public class OvelseKategori {
+public class OvelseKategori implements DataTable {
     @TableColumn(length = 6, primaryKey = true, autoIncrement = true)
     private int id;
 
@@ -39,5 +45,24 @@ public class OvelseKategori {
 
     public void setBeskrivelse(String beskrivelse) {
         this.beskrivelse = beskrivelse;
+    }
+
+    public void create() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+
+        int affectedRows = ps.executeUpdate();
+
+        if (affectedRows == 0) {
+            throw new SQLException("Oppretting av ny treningsøkt feilet, ingen rader påvirket.");
+        }
+
+        try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+            if (generatedKeys.next()) {
+                this.setId(generatedKeys.getInt(1));
+            }
+            else {
+                throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
+            }
+        }
     }
 }
