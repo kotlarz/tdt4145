@@ -39,7 +39,7 @@ public class OvelseKategoriTilhorlighet implements DataTable {
 
     @Override
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseKategoriTilhorlighet.class, this);
         ps.executeUpdate();
     }
 }

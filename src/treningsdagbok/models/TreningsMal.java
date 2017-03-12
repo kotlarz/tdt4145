@@ -40,7 +40,7 @@ public class TreningsMal implements DataTable {
     public void setNavn(String navn) { this.navn = navn; }
 
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsMal.class, this);
 
         int affectedRows = ps.executeUpdate();
 

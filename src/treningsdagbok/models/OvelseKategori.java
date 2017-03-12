@@ -48,7 +48,7 @@ public class OvelseKategori implements DataTable {
     }
 
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseKategori.class, this);
 
         int affectedRows = ps.executeUpdate();
 

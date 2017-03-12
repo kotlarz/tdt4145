@@ -9,6 +9,7 @@ import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class TreningsDagbok {
@@ -24,9 +25,17 @@ public class TreningsDagbok {
             dropDatabase();
             createDatabase();
             insertTestData();
+            startReader();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void startReader() {
+        Scanner reader = new Scanner(System.in);
+        System.out.println("Enter a number: ");
+        int n = reader.nextInt();
+        LOGGER.info("lol: " + n);
     }
 
     public static DataManager getDataManager() {

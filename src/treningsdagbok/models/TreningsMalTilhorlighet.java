@@ -39,7 +39,7 @@ public class TreningsMalTilhorlighet implements DataTable {
 
     @Override
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsMalTilhorlighet.class, this);
         ps.executeUpdate();
     }
 }

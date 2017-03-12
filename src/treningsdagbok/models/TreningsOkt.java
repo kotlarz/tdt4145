@@ -137,7 +137,7 @@ public class TreningsOkt implements DataTable {
     }
 
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsOkt.class, this);
 
         int affectedRows = ps.executeUpdate();
 

@@ -41,7 +41,7 @@ public class InnendorsTrening extends TreningsOkt implements DataTable {
     public void create() throws SQLException, IllegalAccessException {
         super.create();
         this.treningsOktId = super.getId();
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(InnendorsTrening.class, this);
         ps.executeUpdate();
     }
 }

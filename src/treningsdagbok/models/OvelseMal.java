@@ -61,7 +61,7 @@ public class OvelseMal implements DataTable {
     }
 
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseMal.class, this);
 
         int affectedRows = ps.executeUpdate();
 
