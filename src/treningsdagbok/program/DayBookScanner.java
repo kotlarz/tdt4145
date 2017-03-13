@@ -80,7 +80,7 @@ public class DaybookScanner {
         while (true) {
             System.out.println("Form: ");
             if (scanner.hasNextInt()) {
-                varighet = scanner.nextInt();
+                fitness = scanner.nextInt();
                 break;
             }
             System.out.println("Prøv igjen");            
@@ -89,7 +89,7 @@ public class DaybookScanner {
         while (true) {
             System.out.println("Prestasjon: ");
             if (scanner.hasNextInt()) {
-                varighet = scanner.nextInt();
+                performance = scanner.nextInt();
                 break;
             }
             System.out.println("Prøv igjen");
@@ -98,24 +98,65 @@ public class DaybookScanner {
         while (true) {
             System.out.println("Notat: ");
             if (scanner.hasNextLine()) {
-                varighet = scanner.nextLine();
+                note = scanner.nextLine();
                 break;
             }
             System.out.println("Prøv igjen");
         }
+
+        // TODO: legg til treningsøkt
     }
 
-    public void print() {
-        System.out.println("Din balanse: " + account.getBalance());
-    }
 
-    public void welcomeUser() {
-        System.out.println("Skriv inn en startverdi for din bankkonto: ");
-        while (scanner.hasNextLine()) {
-            String line = scanner.nextLine();
-            if (line == null || line.length() == 0)
+    public void addExercise() {
+        System.out.println("Legg til øvelse:");
+        
+        while (true) {
+            System.out.println("Navn: ");
+            if (scanner.hasNextLine()) {
+                name = scanner.nextLine();
                 break;
+            }
+            System.out.println("Prøv igjen");
         }
+        
+        while (true) {
+            System.out.println("Beskrivelse: ");
+            if (scanner.hasNextLine()) {
+                description = scanner.nextLine();
+                break;
+            }
+            System.out.println("Prøv igjen");            
+        }
+        
+        while (true) {
+            System.out.println("Belastning: ");
+            if (scanner.hasNextLine()) {
+                load = scanner.nextLine();
+                break;
+            }
+            System.out.println("Prøv igjen");
+        }
+        
+        while (true) {
+            System.out.println("Antall repitisjoner: ");
+            if (scanner.hasNextInt()) {
+                reps = scanner.nextInt();
+                break;
+            }
+            System.out.println("Prøv igjen");
+        }
+
+        while (true) {
+            System.out.println("Antall sett: ");
+            if (scanner.hasNextInt()) {
+                sets = scanner.nextInt();
+                break;
+            }
+            System.out.println("Prøv igjen");
+        }
+
+        // TODO: legg til øvelse
     }
 
     public static void main(String args[]) {
