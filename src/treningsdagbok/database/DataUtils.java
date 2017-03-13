@@ -125,25 +125,7 @@ public class DataUtils {
             Object value = field.get(objectInstance);
 
             // Set the value for each parameter index.
-            if (String.class.isAssignableFrom(fieldType)) {
-                ps.setString(i, (String) value);
-            } else if (int.class.isAssignableFrom(fieldType)) {
-                ps.setInt(i, (int) value);
-            } else if (LocalDate.class.isAssignableFrom(fieldType)) {
-                ps.setDate(i, java.sql.Date.valueOf((LocalDate) value));
-            } else if (LocalTime.class.isAssignableFrom(fieldType)) {
-                LocalTime time = (LocalTime) value;
-                ps.setTime(i, new Time(time.getHour(), time.getMinute(), time.getSecond()));
-            } else if (LocalDateTime.class.isAssignableFrom(fieldType)) {
-                ps.setDate(i, java.sql.Date.valueOf((LocalDate) value)); // (LocalDateTime) value
-            } else if (float.class.isAssignableFrom(fieldType)) {
-                ps.setFloat(i, (float) value);
-            } else {
-                throw new IllegalArgumentException("Field '" + field.getName() +
-                        "' [Class=" + fieldType + "] in Table class '" +
-                        tableClass.getSimpleName().toLowerCase() + "' does not have a valid FieldType. " +
-                        "It has to be implemented in DataUtils under generatePrepareStatementInsert().");
-            }
+            ps = setParameterValue(ps, fieldType, i, value);
 
             // Increase the parameter index.
             i++;
@@ -362,5 +344,28 @@ public class DataUtils {
 
         // Return the CREATE TABLE SQL query.
         return tableSchema;
+    }
+
+    public static PreparedStatement setParameterValue(PreparedStatement ps, Class fieldType,
+                                                      int parameterIndex, Object value) throws SQLException {
+        // Set the value for each parameter index.
+        if (String.class.isAssignableFrom(fieldType)) {
+            ps.setString(parameterIndex, (String) value);
+        } else if (int.class.isAssignableFrom(fieldType)) {
+            ps.setInt(parameterIndex, (int) value);
+        } else if (LocalDate.class.isAssignableFrom(fieldType)) {
+            ps.setDate(parameterIndex, java.sql.Date.valueOf((LocalDate) value));
+        } else if (LocalTime.class.isAssignableFrom(fieldType)) {
+            LocalTime time = (LocalTime) value;
+            ps.setTime(parameterIndex, new Time(time.getHour(), time.getMinute(), time.getSecond()));
+        } else if (LocalDateTime.class.isAssignableFrom(fieldType)) {
+            ps.setDate(parameterIndex, java.sql.Date.valueOf((LocalDate) value));
+        } else if (float.class.isAssignableFrom(fieldType)) {
+            ps.setFloat(parameterIndex, (float) value);
+        } else {
+            throw new IllegalArgumentException("Field does not have a valid FieldType. " +
+                    "It has to be implemented in DataUtils under setParameterValue().");
+        }
+        return ps;
     }
 }

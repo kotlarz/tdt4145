@@ -3,6 +3,7 @@ package treningsdagbok.models;
 import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
 import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
@@ -131,25 +132,14 @@ public class TreningsOkt implements DataTable {
         try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
             if (generatedKeys.next()) {
                 this.setId(generatedKeys.getInt(1));
-            }
-            else {
+            } else {
                 throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
             }
         }
     }
 
-    public static TreningsOkt getById(int id) throws SQLException, DataItemNotFoundException, NoSuchMethodException,
-            IllegalAccessException, InvocationTargetException, InstantiationException {
-        String query = "SELECT * FROM trenings_okt WHERE id = ?";
-        PreparedStatement ps = TreningsDagbok.getDataManager().getConnection().prepareStatement(query);
-        ps.setInt(1, id);
-        ps.execute();
-        ResultSet rs = ps.executeQuery();
-        if (!rs.next()) {
-            throw new DataItemNotFoundException("Ingen data funnet for spørringen: " + query);
-        }
-        TreningsOkt treningsOkt = (TreningsOkt) DataUtils.getObjectFromResultSet(TreningsOkt.class, rs);
-        ps.close();
-        return treningsOkt;
+    public static TreningsOkt getById(int id) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        return (TreningsOkt) DataGetters.getById(TreningsOkt.class, id);
     }
 }

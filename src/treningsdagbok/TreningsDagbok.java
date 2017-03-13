@@ -2,9 +2,11 @@ package treningsdagbok;
 
 import treningsdagbok.database.DataManager;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.models.*;
 import treningsdagbok.utils.JavaUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -25,8 +27,18 @@ public class TreningsDagbok {
             dropDatabase();
             createDatabase();
             insertTestData();
-            startReader();
-        } catch (SQLException e) {
+            //startReader();
+            TreningsOkt treningsOkt = TreningsOkt.getById(1);
+            System.out.println(treningsOkt.getDato());
+        } catch (SQLException | DataItemNotFoundException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (InstantiationException e) {
             e.printStackTrace();
         }
     }
