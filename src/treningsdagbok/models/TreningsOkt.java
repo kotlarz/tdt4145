@@ -4,8 +4,10 @@ import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -39,6 +41,8 @@ public class TreningsOkt implements DataTable {
 
     @TableColumn(length = 1)
     private int erUtendors;
+
+    public TreningsOkt() {}
 
     public TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
                        int form, int prestasjon, String notat, int erUtendors) {
@@ -115,27 +119,6 @@ public class TreningsOkt implements DataTable {
         this.erUtendors = erUtendors;
     }
 
-    public static TreningsOkt getTreningsOktById(int id) throws SQLException {
-        String query = "SELECT * FROM treningsokt WHERE id = ?";
-        PreparedStatement ps = TreningsDagbok.getDataManager().getConnection().prepareStatement(query);
-        ps.setInt(1, id);
-        ps.executeUpdate();
-        ResultSet rs = ps.executeQuery();
-        while (rs.next()) {
-            System.out.println("Id "+rs.getInt("id")+" Name "+rs.getString("notat"));
-        }
-        ps.close();
-
-        /*
-        TreningsOkt treningsOkt = new TreningsOkt(
-                rs.getDate("dato"), rs.getTime("tidspunkt"), rs.getInt("varighet"),
-                rs.getInt("form"), rs.getInt("prestasjon"), rs.getString("notat")
-        );
-        treningsOkt.setId(rs.getInt("id"));
-        return treningsOkt;*/
-        return null;
-    }
-
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsOkt.class, this);
 
@@ -153,5 +136,20 @@ public class TreningsOkt implements DataTable {
                 throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
             }
         }
+    }
+
+    public static TreningsOkt getById(int id) throws SQLException, DataItemNotFoundException, NoSuchMethodException,
+            IllegalAccessException, InvocationTargetException, InstantiationException {
+        String query = "SELECT * FROM trenings_okt WHERE id = ?";
+        PreparedStatement ps = TreningsDagbok.getDataManager().getConnection().prepareStatement(query);
+        ps.setInt(1, id);
+        ps.execute();
+        ResultSet rs = ps.executeQuery();
+        if (!rs.next()) {
+            throw new DataItemNotFoundException("Ingen data funnet for spørringen: " + query);
+        }
+        TreningsOkt treningsOkt = (TreningsOkt) DataUtils.getObjectFromResultSet(TreningsOkt.class, rs);
+        ps.close();
+        return treningsOkt;
     }
 }

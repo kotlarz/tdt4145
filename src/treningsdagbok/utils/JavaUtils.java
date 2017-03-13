@@ -6,6 +6,7 @@ import treningsdagbok.annotations.TableColumn;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -101,5 +102,25 @@ public class JavaUtils {
 
         // Return the formatted string.
         return pascalCase;
+    }
+
+    /**
+     *
+     * @param methodClass
+     * @param methodName
+     * @return
+     * @throws IllegalAccessException
+     */
+    public static Method getMethodFromClass(Class methodClass, String methodName) throws IllegalAccessException {
+        while (methodClass != null) {
+            Method[] methods = methodClass.getDeclaredMethods();
+            for (Method method : methods) {
+                if (method.getName().equals(methodName)) {
+                    return method;
+                }
+            }
+            methodClass = methodClass.getSuperclass();
+        }
+        throw new IllegalAccessException("Could not find method '" + methodName + "' in Class '" + methodClass.getName() + "'");
     }
 }

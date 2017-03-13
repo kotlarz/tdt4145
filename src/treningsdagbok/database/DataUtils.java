@@ -1,14 +1,21 @@
 package treningsdagbok.database;
 
+import org.h2.compress.Compressor;
 import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.models.TreningsOkt;
 import treningsdagbok.utils.JavaUtils;
 
+import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.logging.Logger;
 
@@ -130,7 +137,7 @@ public class DataUtils {
             } else if (LocalDateTime.class.isAssignableFrom(fieldType)) {
                 ps.setDate(i, java.sql.Date.valueOf((LocalDate) value)); // (LocalDateTime) value
             } else if (float.class.isAssignableFrom(fieldType)) {
-                ps.setFloat(i, (int) value);
+                ps.setFloat(i, (float) value);
             } else {
                 throw new IllegalArgumentException("Field '" + field.getName() +
                         "' [Class=" + fieldType + "] in Table class '" +
@@ -144,6 +151,77 @@ public class DataUtils {
 
         // Return the PreparedStatement.
         return ps;
+    }
+
+    /**
+     * Dynamic object creation of a ResultSet.
+     * This requires all the field in the Table Class to have a setter method.
+     *
+     * @param tableClass The Table Class which we want to return the object for.
+     * @param resultSet The ResultSet we want to export into an object.
+     * @return An object with the same class/type as tableClass.
+     * @throws SQLException
+     * @throws NoSuchMethodException
+     * @throws InvocationTargetException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     */
+    public static Object getObjectFromResultSet(Class tableClass, ResultSet resultSet) throws SQLException,
+            NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
+        // Initialize the object.
+        Object object = tableClass.getConstructor().newInstance();
+
+        // Grab the field annotations for the table class.
+        Map<Field, TableColumn> fieldAnnotations = JavaUtils.getDataFieldAnnotations(tableClass);
+
+        // Loop through all the field annotations.
+        for (Map.Entry<Field, TableColumn> entry : fieldAnnotations.entrySet()) {
+            // Get the Field and TableColumn
+            Field field = entry.getKey();
+            TableColumn column = entry.getValue();
+
+            // Generate a snake_case String for the table field.
+            String name = stringToSnakeCase(field.getName());
+
+            // Set the data type of the database field (String, int, etc.).
+            Class fieldType = field.getType();
+            if (!TableColumn.DEFAULT.class.isAssignableFrom(column.dataType())) {
+                fieldType = column.dataType();
+            }
+
+            // Set the name of the setter method.
+            // Example: "numberOfAccounts()" => "setNumberOfAccounts()"
+            String setterMethodName = "set" + field.getName().substring(0, 1).toUpperCase() +
+                    field.getName().substring(1);
+
+            // Get the method from the class (this works for private methods as well.
+            Method method = JavaUtils.getMethodFromClass(tableClass, setterMethodName);
+            method.setAccessible(true);
+
+            // Execute the setter method.
+            if (String.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, resultSet.getString(name));
+            } else if (int.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, resultSet.getInt(name));
+            } else if (LocalDate.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, resultSet.getDate(name).toLocalDate());
+            } else if (LocalTime.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, resultSet.getTime(name).toLocalTime());
+            } else if (LocalDateTime.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, LocalDateTime.ofInstant(resultSet.getDate(name).toInstant(), ZoneId.systemDefault()));
+            } else if (float.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, resultSet.getFloat(name));
+            } else {
+                throw new IllegalArgumentException("Field '" + field.getName() +
+                        "' [Class=" + fieldType + "] in Table class '" +
+                        tableClass.getSimpleName().toLowerCase() + "' does not have a valid FieldType. " +
+                        "It has to be implemented in DataUtils under getObjectFromResultSet().");
+            }
+
+        }
+
+        // Return the object
+        return object;
     }
 
     /**
