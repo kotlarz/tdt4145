@@ -66,4 +66,40 @@ public class JavaUtils {
         // Return the formatted string.
         return snakeCase;
     }
+
+    /**
+     * Formats the string as a PascalCase by captializing every character
+     * after an underscore. Does the opposite of stringToSnakeCase().
+     * Example:
+     * - trenings_mal_tilhorlighet => TreningsMalTilhorlighet
+     * - innendors_trening => InnendorsTrenings
+     * - antall_tilskuere => AntallTilskuere
+     *
+     * @param string The String that we want to format.
+     * @return A PascalCase formatted string.
+     */
+    public static String stringToPascalCase(String string) {
+        // Initialize the new String.
+        String pascalCase = "";
+        boolean capitalizeCharacter = true;
+
+        // Loop through all the characters in the String.
+        for (int i = 0; i < string.length(); i++) {
+            // Is the current character an underscore?
+            if (string.charAt(i) == '_') {
+                // Captialize the next character in the loop.
+                capitalizeCharacter = true;
+                continue;
+            }
+
+            // Append the current character to the new String.
+            pascalCase += capitalizeCharacter ? Character.toUpperCase(string.charAt(i)) : string.charAt(i);
+
+            // Reset the boolean.
+            capitalizeCharacter = false;
+        }
+
+        // Return the formatted string.
+        return pascalCase;
+    }
 }
