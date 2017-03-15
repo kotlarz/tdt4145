@@ -2,12 +2,18 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Table
 public class OvelseKategori implements DataTable {
@@ -64,5 +70,22 @@ public class OvelseKategori implements DataTable {
                 throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
             }
         }
+    }
+
+    public static OvelseKategori getById(int id) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        return (OvelseKategori) DataGetters.getById(OvelseKategori.class, id);
+    }
+
+    public static Set<OvelseKategori> getAll() throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        Set<Object> objects = DataGetters.getAll(OvelseKategori.class);
+        Iterator<Object> iterator = objects.iterator();
+        Set<OvelseKategori> result = new HashSet<>();
+        while (iterator.hasNext()) {
+            result.add((OvelseKategori) iterator.next());
+        }
+        return result;
     }
 }

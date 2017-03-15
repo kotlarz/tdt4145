@@ -15,6 +15,9 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Table
 public class UtendorsTrening extends TreningsOkt implements DataTable {
@@ -64,6 +67,11 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
 
     public static UtendorsTrening getById(int id) throws NoSuchMethodException, IllegalAccessException,
             InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
-        return (UtendorsTrening) DataGetters.getById(UtendorsTrening.class, id);
+        return (UtendorsTrening) DataGetters.getBy(
+                "TreningsOktId",
+                int.class,
+                UtendorsTrening.class,
+                id
+        );
     }
 }

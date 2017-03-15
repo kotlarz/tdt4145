@@ -2,13 +2,18 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
-import treningsdagbok.enums.Belastning;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Table
 public class Ovelse implements DataTable {
@@ -21,21 +26,14 @@ public class Ovelse implements DataTable {
     @TableColumn(nullable = true)
     private String beskrivelse;
 
-    @TableColumn(length = 15, nullable = true, dataType = String.class)
-    private Belastning belastning;
+    private Set<OvelseKategori> kategorier;
 
-    @TableColumn(length = 3)
-    private int antallRepetisjoner;
+    private Set<OvelseResultat> resultater;
 
-    @TableColumn(length = 3)
-    private int antallSett;
-
-    public Ovelse(String navn, String beskrivelse, Belastning belastning, int antallRepetisjoner, int antallSett) {
+    public Ovelse(String navn, String beskrivelse) {
         this.navn = navn;
         this.beskrivelse = beskrivelse;
-        this.belastning = belastning;
-        this.antallRepetisjoner = antallRepetisjoner;
-        this.antallSett = antallSett;
+        this.kategorier = null;
     }
 
     public int getId() {
@@ -60,37 +58,13 @@ public class Ovelse implements DataTable {
         this.beskrivelse = beskrivelse;
     }
 
-    public Belastning getBelastning() {
-        return belastning;
-    }
-
-    public void setBelastning(Belastning belastning) {
-        this.belastning = belastning;
-    }
-
-    public int getAntallRepetisjoner() {
-        return antallRepetisjoner;
-    }
-
-    public void setAntallRepetisjoner(int antallRepetisjoner) {
-        this.antallRepetisjoner = antallRepetisjoner;
-    }
-
-    public int getAntallSett() {
-        return antallSett;
-    }
-
-    public void setAntallSett(int antallSett) {
-        this.antallSett = antallSett;
-    }
-
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(Ovelse.class, this);
 
         int affectedRows = ps.executeUpdate();
 
         if (affectedRows == 0) {
-            throw new SQLException("Oppretting av ny treningsøkt feilet, ingen rader påvirket.");
+            throw new SQLException("Oppretting av ny øvelse feilet, ingen rader påvirket.");
         }
 
         try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
@@ -98,8 +72,56 @@ public class Ovelse implements DataTable {
                 this.setId(generatedKeys.getInt(1));
             }
             else {
-                throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
+                throw new SQLException("Oppretting av en ny øvelse feilet, returnerte ingen ID.");
             }
         }
+    }
+
+    public void addKategori(OvelseKategori kategori) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        this.getKategorier();
+        if (this.kategorier.contains(kategori)) {
+            throw new IllegalArgumentException("Kategori eksiterer i treningsøkten allerede.");
+        }
+        OvelseKategoriTilhorlighet newTilhorlighet = new OvelseKategoriTilhorlighet(this, kategori);
+        newTilhorlighet.create();
+        this.kategorier.add(kategori);
+    }
+
+    public Set<OvelseKategori> getKategorier() throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        if (this.kategorier == null) {
+            this.kategorier = new HashSet<>();
+            Set<OvelseKategoriTilhorlighet> tilhorligheter = OvelseKategoriTilhorlighet.getByOvelseId(this.getId());
+            for (OvelseKategoriTilhorlighet tilhorlighet : tilhorligheter) {
+                this.kategorier.add(OvelseKategori.getById(tilhorlighet.getKategoriId()));
+            }
+        }
+        return this.kategorier;
+    }
+
+    public Set<OvelseResultat> getResultater() throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        if (this.resultater == null) {
+            this.resultater = OvelseResultat.getByOvelse(this);
+        }
+        return this.resultater;
+    }
+
+    public static Ovelse getById(int id) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        return (Ovelse) DataGetters.getById(Ovelse.class, id);
+    }
+
+    public static Set<Ovelse> getAll() throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        Set<Object> objects = DataGetters.getAll(Ovelse.class);
+        Iterator<Object> iterator = objects.iterator();
+        Set<Ovelse> result = new HashSet<>();
+        while (iterator.hasNext()) {
+            result.add((Ovelse) iterator.next());
+        }
+        return result;
     }
 }

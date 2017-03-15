@@ -12,7 +12,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.time.ZoneId;
+import java.util.*;
 import java.util.logging.Logger;
 
 @Table
@@ -43,6 +43,12 @@ public class TreningsOkt implements DataTable {
     @TableColumn(length = 1)
     private int erUtendors;
 
+    private Set<Ovelse> ovelser;
+
+    private Set<TreningsData> data;
+
+    private Map<Integer, Set<OvelseResultat>> ovelseResultater;
+
     public TreningsOkt() {}
 
     public TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
@@ -54,6 +60,9 @@ public class TreningsOkt implements DataTable {
         this.prestasjon = prestasjon;
         this.notat = notat;
         this.erUtendors = erUtendors;
+        this.ovelser = null;
+        this.data = null;
+        this.ovelseResultater = new HashMap<>();
     }
 
     public int getId() {
@@ -138,8 +147,84 @@ public class TreningsOkt implements DataTable {
         }
     }
 
+    public void addOvelse(Ovelse ovelse) throws NoSuchMethodException, IllegalAccessException, InstantiationException,
+            SQLException, DataItemNotFoundException, InvocationTargetException {
+        this.getOvelser();
+        if (this.ovelser.contains(ovelse)) {
+            throw new IllegalArgumentException("Øvelse eksiterer i treningsøkten allerede.");
+        }
+        OvelseTilhorlighet newTilhorlighet = new OvelseTilhorlighet(this, ovelse);
+        newTilhorlighet.create();
+        this.ovelser.add(ovelse);
+    }
+
+    public Set<Ovelse> getOvelser() throws NoSuchMethodException, IllegalAccessException, InstantiationException,
+            SQLException, DataItemNotFoundException, InvocationTargetException {
+        if (this.ovelser == null) {
+            this.ovelser = new HashSet<>();
+            Set<OvelseTilhorlighet> tilhorligheter = OvelseTilhorlighet.getByTreningsOktId(this.getId());
+            for (OvelseTilhorlighet tilhorlighet : tilhorligheter) {
+                this.ovelser.add(Ovelse.getById(tilhorlighet.getOvelseId()));
+            }
+        }
+        return this.ovelser;
+    }
+
+    public void addData(TreningsData data) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        this.getTreningsData();
+        if (this.data.contains(data)) {
+            throw new IllegalArgumentException("Trenings objektet data eksiterer i treningsøkten allerede.");
+        }
+        this.data.add(data);
+    }
+
+    public Set<TreningsData> getTreningsData() throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        if (this.data == null) {
+            this.data = TreningsData.getByTreningsOktId(this.getId());
+        }
+        return this.data;
+    }
+
+    public void addOvelseResultat(Ovelse ovelse, OvelseResultat ovelseResultat) throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        this.getOvelseResultat(ovelse);
+        if (this.ovelseResultater.containsKey(ovelse.getId())
+                && this.ovelseResultater.get(ovelse.getId()).contains(ovelseResultat)) {
+            throw new IllegalArgumentException("Trenings objektet data eksiterer i treningsøkten allerede.");
+        }
+        Set<OvelseResultat> newOvelseResultater = this.ovelseResultater.get(ovelse.getId());
+        newOvelseResultater.add(ovelseResultat);
+        this.ovelseResultater.put(ovelse.getId(), newOvelseResultater);
+    }
+
+    public Set<OvelseResultat> getOvelseResultat(Ovelse ovelse) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        if (!this.ovelseResultater.containsKey(ovelse.getId())) {
+            Set<OvelseResultat> newOvelseResultater = new HashSet<>();
+            OvelseResultat ovelseResultat = OvelseResultat.getByObjects(this, ovelse);
+            newOvelseResultater.add(ovelseResultat);
+            this.ovelseResultater.put(ovelse.getId(), newOvelseResultater);
+        }
+        return this.ovelseResultater.get(ovelse.getId());
+    }
+
     public static TreningsOkt getById(int id) throws NoSuchMethodException, IllegalAccessException,
             InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
         return (TreningsOkt) DataGetters.getById(TreningsOkt.class, id);
+    }
+
+    public static Set<TreningsOkt> getAll() throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        Set<Object> objects = DataGetters.getAll(TreningsOkt.class);
+        Iterator<Object> iterator = objects.iterator();
+        Set<TreningsOkt> result = new HashSet<>();
+        while (iterator.hasNext()) {
+            result.add((TreningsOkt) iterator.next());
+        }
+        return result;
     }
 }

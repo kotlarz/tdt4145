@@ -1,17 +1,13 @@
 package treningsdagbok.database;
 
-import org.h2.compress.Compressor;
 import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.TableColumn;
-import treningsdagbok.models.TreningsOkt;
 import treningsdagbok.utils.JavaUtils;
 
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.*;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

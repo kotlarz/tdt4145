@@ -13,6 +13,22 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DataGetters {
+    public static Set<Object> getAll(Class objectClass)
+            throws SQLException, DataItemNotFoundException, NoSuchMethodException, IllegalAccessException,
+            InvocationTargetException, InstantiationException {
+        Set<Object> results = new HashSet<>();
+        String tableName = JavaUtils.stringToSnakeCase(objectClass.getSimpleName());
+        String query = "SELECT * FROM " + tableName;
+        PreparedStatement ps = TreningsDagbok.getDataManager().getConnection().prepareStatement(query);
+        ps.execute();
+        ResultSet rs = ps.executeQuery();
+        while (rs.next()) {
+            results.add(DataUtils.getObjectFromResultSet(objectClass, rs));
+        }
+        ps.close();
+        return results;
+    }
+
     public static Set<Object> getByMultiple(String fieldName, Class valueClass, Class objectClass, Object value)
             throws SQLException, DataItemNotFoundException, NoSuchMethodException, IllegalAccessException,
             InvocationTargetException, InstantiationException {
