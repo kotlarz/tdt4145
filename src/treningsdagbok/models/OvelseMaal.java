@@ -2,16 +2,22 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Table
-public class OvelseMal implements DataTable {
+public class OvelseMaal implements DataTable {
     @TableColumn(length = 11, primaryKey = true, autoIncrement = true)
     private int id;
 
@@ -24,7 +30,7 @@ public class OvelseMal implements DataTable {
     @TableColumn
     private String beskrivelse;
 
-    public OvelseMal(LocalDateTime start, LocalDateTime end, String beskrivelse) {
+    public OvelseMaal(LocalDateTime start, LocalDateTime end, String beskrivelse) {
         this.start = start;
         this.end = end;
         this.beskrivelse = beskrivelse;
@@ -61,12 +67,12 @@ public class OvelseMal implements DataTable {
     }
 
     public void create() throws SQLException, IllegalAccessException {
-        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseMal.class, this);
+        PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseMaal.class, this);
 
         int affectedRows = ps.executeUpdate();
 
         if (affectedRows == 0) {
-            throw new SQLException("Oppretting av ny treningsøkt feilet, ingen rader påvirket.");
+            throw new SQLException("Oppretting av ny øvelse mål feilet, ingen rader påvirket.");
         }
 
         try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
@@ -74,8 +80,25 @@ public class OvelseMal implements DataTable {
                 this.setId(generatedKeys.getInt(1));
             }
             else {
-                throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
+                throw new SQLException("Oppretting av en ny øvelse mål feilet, returnerte ingen ID.");
             }
         }
+    }
+
+    public static OvelseMaal getById(int id) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        return (OvelseMaal) DataGetters.getById(OvelseMaal.class, id);
+    }
+
+    public static Set<OvelseMaal> getAll() throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        Set<Object> objects = DataGetters.getAll(OvelseMaal.class);
+        Iterator<Object> iterator = objects.iterator();
+        Set<OvelseMaal> result = new HashSet<>();
+        while (iterator.hasNext()) {
+            result.add((OvelseMaal) iterator.next());
+        }
+        return result;
     }
 }

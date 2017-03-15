@@ -2,12 +2,18 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Table
 public class TreningsData implements DataTable {
@@ -19,6 +25,7 @@ public class TreningsData implements DataTable {
 
     @TableColumn(length = 3, nullable = true)
     private int puls;
+
     @TableColumn(precision = 11, scale = 8, nullable = true)
     private float lengdegrad;
 
@@ -28,7 +35,9 @@ public class TreningsData implements DataTable {
     @TableColumn(length = 4, nullable = true)
     private int moh;
 
-    public TreningsData(LocalDateTime tid, int puls, float lengdegrad, float breddegrad, int moh) {
+    public TreningsData(TreningsOkt treningsOkt, LocalDateTime tid, int puls,
+                        float lengdegrad, float breddegrad, int moh) {
+        this.treningsOktId = treningsOkt.getId();
         this.tid = tid;
         this.puls = puls;
         this.lengdegrad = lengdegrad;
@@ -84,5 +93,28 @@ public class TreningsData implements DataTable {
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsData.class, this);
         ps.executeUpdate();
+    }
+
+    public static Set<TreningsData> getByTreningsOkt(TreningsOkt treningsOkt) throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        return getByTreningsOktId(treningsOkt.getId());
+    }
+
+    public static Set<TreningsData> getByTreningsOktId(int treningsOktId) throws NoSuchMethodException,
+            IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
+            InvocationTargetException {
+        Set<Object> objects = DataGetters.getByMultiple(
+                "TreningsOktId",
+                int.class,
+                TreningsData.class,
+                treningsOktId
+        );
+        Iterator<Object> iterator = objects.iterator();
+        Set<TreningsData> result = new HashSet<>();
+        while (iterator.hasNext()) {
+            result.add((TreningsData) iterator.next());
+        }
+        return result;
     }
 }

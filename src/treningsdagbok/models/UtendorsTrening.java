@@ -2,16 +2,22 @@ package treningsdagbok.models;
 
 import treningsdagbok.annotations.Table;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
 import treningsdagbok.enums.VaerType;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 @Table
 public class UtendorsTrening extends TreningsOkt implements DataTable {
@@ -57,5 +63,15 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
         this.treningsOktId = super.getId();
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(UtendorsTrening.class, this);
         ps.executeUpdate();
+    }
+
+    public static UtendorsTrening getById(int id) throws NoSuchMethodException, IllegalAccessException,
+            InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
+        return (UtendorsTrening) DataGetters.getBy(
+                "TreningsOktId",
+                int.class,
+                UtendorsTrening.class,
+                id
+        );
     }
 }
