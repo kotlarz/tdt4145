@@ -24,7 +24,7 @@ public class DataUtils {
      * Generates a INSERT SQL query for a PreparedStatement.
      *
      * @param tableClass The Table Class that we want to generate the query for.
-     * @return INSER SQL query for a PreparedStatement.
+     * @return INSERT SQL query for a PreparedStatement.
      */
     private static String generateInsertQuery(Class tableClass) {
         // Generate a snake_case string for the table name.
@@ -72,7 +72,7 @@ public class DataUtils {
      * Initializes a PreparedStatement INSERT query, sets the parameter values for the Table Class and returns
      * the statement.
      *
-     * @param tableClass The Table Class that we want to generate the query for.
+     * @param tableClass     The Table Class that we want to generate the query for.
      * @param objectInstance The actual object with the data.
      * @return A PreparedStatement with all the parameters initialized.
      * @throws SQLException
@@ -125,6 +125,105 @@ public class DataUtils {
 
             // Increase the parameter index.
             i++;
+        }
+
+        // Return the PreparedStatement.
+        return ps;
+    }
+
+    private static String generateDeleteQuery(Class tableClass) {
+        // Generate a snake_case string for the table name.
+        String tableName = stringToSnakeCase(tableClass.getSimpleName());
+
+        // Initialize the DELETE SQL query.
+        String deleteQuery = "DELETE FROM `" + tableName + "` WHERE ";
+
+        String whereQuery = "";
+
+        // Initialize a index counter.
+        int i = 1;
+
+        // Grab the field annotations for the table class.
+        Map<Field, TableColumn> fieldAnnotations = JavaUtils.getDataFieldAnnotations(tableClass);
+
+        // Loop through all the field annotations (TableColumn).
+        for (Map.Entry<Field, TableColumn> entry : fieldAnnotations.entrySet()) {
+            // Get the Field and TableColumn from the Set.
+            Field field = entry.getKey();
+            TableColumn column = entry.getValue();
+
+            // Generate a snake_case string for the table field.
+            String name = stringToSnakeCase(field.getName());
+
+            // Is the TableColumn the last one in the array?
+            boolean isLast = i++ != fieldAnnotations.size();
+
+            if (column.primaryKey() && column.autoIncrement()) {
+                whereQuery = name + " = ?";
+                break;
+            } else if (column.identifier()) {
+                whereQuery += name + " = ?" + (isLast ? " AND " : "");
+            }
+        }
+
+        // Return the DELETE query.
+        return deleteQuery + whereQuery;
+    }
+
+    public static PreparedStatement generatePrepareStatementDelete(Class tableClass, Object objectInstance) throws
+            SQLException, IllegalAccessException {
+        String query = generateDeleteQuery(tableClass);
+
+        LOGGER.finer(query);
+
+        PreparedStatement ps = TreningsDagbok.getDataManager().getConnection().prepareStatement(query);
+
+        // Parameter index
+        int i = 1;
+
+        // Grab the field annotations for the table class.
+        Map<Field, TableColumn> fieldAnnotations = JavaUtils.getDataFieldAnnotations(tableClass);
+
+        boolean containsId = false;
+
+
+        for (Map.Entry<Field, TableColumn> entry : fieldAnnotations.entrySet()) {
+            // Get the TableColumn (annotation).
+            TableColumn column = entry.getValue();
+            if (column.primaryKey() && column.autoIncrement()) {
+                containsId = true;
+                break;
+            }
+        }
+
+        // Loop through all the field annotations.
+        for (Map.Entry<Field, TableColumn> entry : fieldAnnotations.entrySet()) {
+            // Get the TableColumn (annotation).
+            TableColumn column = entry.getValue();
+
+            if ((containsId && column.primaryKey() && column.autoIncrement())
+                    || (!containsId && column.identifier())) {
+                // Get the field.
+                Field field = entry.getKey();
+
+                // Set the field to be accessible (i.e. we can grab the value of the field from the object).
+                field.setAccessible(true);
+
+                // Set the data type of the database field (String, int, etc.).
+                Class fieldType = field.getType();
+                if (!TableColumn.DEFAULT.class.isAssignableFrom(column.dataType())) {
+                    fieldType = column.dataType();
+                }
+
+                // Since the field is accessible we can grab its value.
+                Object value = field.get(objectInstance);
+
+                // Set the value for each parameter index.
+                ps = setParameterValue(ps, fieldType, i, value);
+
+                // Increase the parameter index.
+                i++;
+            }
         }
 
         // Return the PreparedStatement.

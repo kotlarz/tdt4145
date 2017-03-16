@@ -49,9 +49,9 @@ public class TreningsOkt implements DataTable {
 
     private Map<Integer, Set<OvelseResultat>> ovelseResultater;
 
-    public TreningsOkt() {}
+    protected TreningsOkt() {}
 
-    public TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
+    protected TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
                        int form, int prestasjon, String notat, int erUtendors) {
         this.dato = dato;
         this.tidspunkt = tidspunkt;
@@ -145,6 +145,12 @@ public class TreningsOkt implements DataTable {
                 throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
             }
         }
+    }
+
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(TreningsOkt.class, this);
+        ps.executeUpdate();
     }
 
     public void addOvelse(Ovelse ovelse) throws NoSuchMethodException, IllegalAccessException, InstantiationException,

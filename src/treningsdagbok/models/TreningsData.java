@@ -17,10 +17,10 @@ import java.util.Set;
 
 @Table
 public class TreningsData implements DataTable {
-    @TableColumn(length = 6, foreignKey={"trenings_okt", "id"})
+    @TableColumn(length = 6, foreignKey={"trenings_okt", "id"}, identifier = true)
     private int treningsOktId;
 
-    @TableColumn(fieldDefault = "CURRENT_TIMESTAMP")
+    @TableColumn(fieldDefault = "CURRENT_TIMESTAMP", identifier = true)
     private LocalDateTime tid;
 
     @TableColumn(length = 3, nullable = true)
@@ -92,6 +92,12 @@ public class TreningsData implements DataTable {
     @Override
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsData.class, this);
+        ps.executeUpdate();
+    }
+
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(TreningsData.class, this);
         ps.executeUpdate();
     }
 

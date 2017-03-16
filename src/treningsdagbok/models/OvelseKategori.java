@@ -53,6 +53,7 @@ public class OvelseKategori implements DataTable {
         this.beskrivelse = beskrivelse;
     }
 
+    @Override
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseKategori.class, this);
 
@@ -70,6 +71,12 @@ public class OvelseKategori implements DataTable {
                 throw new SQLException("Oppretting av en ny treningsøkt feilet, returnerte ingen ID.");
             }
         }
+    }
+
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(OvelseKategori.class, this);
+        ps.executeUpdate();
     }
 
     public static OvelseKategori getById(int id) throws NoSuchMethodException, IllegalAccessException,

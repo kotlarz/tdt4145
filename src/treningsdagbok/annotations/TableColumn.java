@@ -12,6 +12,7 @@ public @interface TableColumn {
     boolean nullable() default false;
     boolean autoIncrement() default false;
     boolean primaryKey() default false;
+    boolean identifier() default false;
     String fieldDefault() default "";
     int precision() default 0;
     int scale() default 0;

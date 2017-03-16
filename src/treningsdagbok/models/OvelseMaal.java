@@ -85,6 +85,12 @@ public class OvelseMaal implements DataTable {
         }
     }
 
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(OvelseMaal.class, this);
+        ps.executeUpdate();
+    }
+
     public static OvelseMaal getById(int id) throws NoSuchMethodException, IllegalAccessException,
             InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
         return (OvelseMaal) DataGetters.getById(OvelseMaal.class, id);

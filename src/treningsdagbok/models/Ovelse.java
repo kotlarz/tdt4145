@@ -77,6 +77,12 @@ public class Ovelse implements DataTable {
         }
     }
 
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(Ovelse.class, this);
+        ps.executeUpdate();
+    }
+
     public void addKategori(OvelseKategori kategori) throws NoSuchMethodException, IllegalAccessException,
             InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
         this.getKategorier();

@@ -16,10 +16,10 @@ import java.util.Set;
 
 @Table
 public class OvelseKategoriTilhorlighet implements DataTable {
-    @TableColumn(length = 6, foreignKey = {"ovelse", "id"})
+    @TableColumn(length = 6, foreignKey = {"ovelse", "id"}, identifier = true)
     private int ovelseId;
 
-    @TableColumn(length = 6, foreignKey = {"ovelse_kategori", "id"})
+    @TableColumn(length = 6, foreignKey = {"ovelse_kategori", "id"}, identifier = true)
     private int kategoriId;
 
     OvelseKategoriTilhorlighet(Ovelse ovelse, OvelseKategori kategori) {
@@ -46,6 +46,12 @@ public class OvelseKategoriTilhorlighet implements DataTable {
     @Override
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(OvelseKategoriTilhorlighet.class, this);
+        ps.executeUpdate();
+    }
+
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(OvelseKategoriTilhorlighet.class, this);
         ps.executeUpdate();
     }
 

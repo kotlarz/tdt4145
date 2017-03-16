@@ -14,10 +14,10 @@ import java.util.*;
 
 @Table
 public class TreningsMalTilhorlighet implements DataTable {
-    @TableColumn(length = 6, foreignKey = {"trenings_okt", "id"})
+    @TableColumn(length = 6, foreignKey = {"trenings_okt", "id"}, identifier = true)
     private int treningsOktId;
 
-    @TableColumn(length = 6, foreignKey = {"ovelse", "id"})
+    @TableColumn(length = 6, foreignKey = {"ovelse", "id"}, identifier = true)
     private int ovelseId;
 
     TreningsMalTilhorlighet(TreningsOkt treningsOkt, Ovelse ovelse) {
@@ -44,6 +44,12 @@ public class TreningsMalTilhorlighet implements DataTable {
     @Override
     public void create() throws SQLException, IllegalAccessException {
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(TreningsMalTilhorlighet.class, this);
+        ps.executeUpdate();
+    }
+
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(TreningsMalTilhorlighet.class, this);
         ps.executeUpdate();
     }
 

@@ -28,28 +28,10 @@ public class TreningsDagbok {
             createDatabase();
             insertTestData();
             //startReader();
-            TreningsOkt treningsOkt = TreningsOkt.getById(1);
-            System.out.println(treningsOkt.getDato());
-        } catch (SQLException | DataItemNotFoundException e) {
-            e.printStackTrace();
-        } catch (NoSuchMethodException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (InstantiationException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
-
-    private static void startReader() {
-        Scanner reader = new Scanner(System.in);
-        System.out.println("Enter a number: ");
-        int n = reader.nextInt();
-        LOGGER.info("lol: " + n);
-    }
-
     public static DataManager getDataManager() {
         return dataManager;
     }
@@ -102,6 +84,7 @@ public class TreningsDagbok {
         );
         try {
             treningsOkt.create();
+            treningsOkt.delete();
         } catch (SQLException | IllegalAccessException e) {
             e.printStackTrace();
         }

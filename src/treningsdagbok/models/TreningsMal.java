@@ -64,6 +64,12 @@ public class TreningsMal implements DataTable {
         }
     }
 
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(TreningsMal.class, this);
+        ps.executeUpdate();
+    }
+
     public static TreningsMal getById(int id) throws NoSuchMethodException, IllegalAccessException,
             InstantiationException, SQLException, DataItemNotFoundException, InvocationTargetException {
         return (TreningsMal) DataGetters.getById(TreningsMal.class, id);

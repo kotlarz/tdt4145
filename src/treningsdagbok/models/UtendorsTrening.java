@@ -21,7 +21,7 @@ import java.util.Set;
 
 @Table
 public class UtendorsTrening extends TreningsOkt implements DataTable {
-    @TableColumn(length = 6, foreignKey={"trenings_okt", "id"})
+    @TableColumn(length = 6, foreignKey = {"trenings_okt", "id"}, identifier = true)
     private int treningsOktId;
 
     @TableColumn(precision = 3, scale = 1)
@@ -63,6 +63,13 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
         this.treningsOktId = super.getId();
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(UtendorsTrening.class, this);
         ps.executeUpdate();
+    }
+
+    @Override
+    public void delete() throws SQLException, IllegalAccessException {
+        PreparedStatement ps = DataUtils.generatePrepareStatementDelete(UtendorsTrening.class, this);
+        ps.executeUpdate();
+        super.delete();
     }
 
     public static UtendorsTrening getById(int id) throws NoSuchMethodException, IllegalAccessException,
