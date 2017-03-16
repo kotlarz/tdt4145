@@ -18,13 +18,13 @@ public class InnendorsTrening extends TreningsOkt implements DataTable {
     private int treningsOktId;
 
     @TableColumn(precision = 3, scale = 1)
-    private String luftkvalitet;
+    private float luftkvalitet;
 
     @TableColumn(length = 6)
     private int antallTilskuere;
 
     public InnendorsTrening(LocalDate dato, LocalTime tidspunkt, int varighet, int form, int prestasjon, String notat,
-                            String luftkvalitet, int antallTilskuere) {
+                            float luftkvalitet, int antallTilskuere) {
         super(dato, tidspunkt, varighet, form, prestasjon, notat, 0);
         this.luftkvalitet = luftkvalitet;
         this.antallTilskuere = antallTilskuere;
@@ -32,7 +32,7 @@ public class InnendorsTrening extends TreningsOkt implements DataTable {
 
     public int getTreningsOktId() { return treningsOktId; }
 
-    public String getLuftkvalitet() {
+    public float getLuftkvalitet() {
         return luftkvalitet;
     }
 

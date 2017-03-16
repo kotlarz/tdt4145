@@ -125,6 +125,10 @@ public class TreningsOkt implements DataTable {
         return erUtendors;
     }
 
+    public boolean isUtendors() {
+        return erUtendors == 1;
+    }
+
     public void setErUtendors(int erUtendors) {
         this.erUtendors = erUtendors;
     }

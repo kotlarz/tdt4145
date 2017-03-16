@@ -2,36 +2,63 @@ package treningsdagbok;
 
 import treningsdagbok.database.DataManager;
 import treningsdagbok.database.DataUtils;
-import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.models.*;
-import treningsdagbok.utils.JavaUtils;
+import treningsdagbok.program.TreningsDagbookScanner;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.util.Scanner;
 import java.util.logging.Logger;
 
 public class TreningsDagbok {
     private static final Logger LOGGER = Logger.getLogger(TreningsDagbok.class.getName());
     private static DataManager dataManager;
+    private static TreningsDagbookScanner scanner = new TreningsDagbookScanner();
 
     public static void main(String[] args) {
         // TODO: connect to DataManager
         dataManager = new DataManager("localhost", "treningsdagbok");
         dataManager.connect("treningsdagbok", "treningsdagbok");
-        LOGGER.info("Hello world!");
         try {
             dropDatabase();
             createDatabase();
-            insertTestData();
-            //startReader();
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
+        startScanner();
     }
+
+    private static void startScanner() {
+        while (true) {
+            System.out.println("Hva vil du?");
+            System.out.println("1: Legg til økt.");
+            System.out.println("2: Slett økt.");
+            System.out.println("3: Legg til øvelse.");
+            System.out.println("4: Beste øvelser siste 3 måneder.");
+
+            if (scanner.getScanner().hasNextInt()) {
+                int i = scanner.getScanner().nextInt();
+                switch (i) {
+                    case 1:
+                        scanner.addSession();
+                        break;
+                    case 2:
+                        scanner.deleteSession();
+                        break;
+                    case 3:
+                        scanner.addExercise();
+                        break;
+                    case 4:
+                        //scanner.printBestSession();
+                        break;
+                    default:
+                        System.out.printf("Kjenner ikke operasjonen");
+                }
+            } else {
+                throw new IllegalArgumentException("Niks.");
+            }
+        }
+    }
+
     public static DataManager getDataManager() {
         return dataManager;
     }
@@ -55,7 +82,7 @@ public class TreningsDagbok {
             DataUtils.generateTableSchema(TreningsMalTilhorlighet.class)
         };
         for (String tableSchema : tableSchemas) {
-            LOGGER.info(tableSchema);
+            LOGGER.fine(tableSchema);
             Statement stmt = connection.createStatement();
             stmt.execute(tableSchema);
             stmt.close();
@@ -69,25 +96,5 @@ public class TreningsDagbok {
         PreparedStatement ps = getDataManager().getConnection().prepareStatement("DROP ALL OBJECTS");
         ps.executeUpdate();
         ps.close();
-    }
-
-    private static void insertTestData() {
-        InnendorsTrening treningsOkt = new InnendorsTrening(
-                LocalDate.now(),
-                LocalTime.now(),
-                3600,
-                6,
-                8,
-                "Eksempel notat",
-                "BRA",
-                105
-        );
-        try {
-            treningsOkt.create();
-            treningsOkt.delete();
-        } catch (SQLException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
     }
 }
