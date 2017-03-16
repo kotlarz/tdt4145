@@ -57,21 +57,21 @@ public class OvelseTilhorlighet implements DataTable {
         ps.executeUpdate();
     }
 
-    public static OvelseMaal getByObjects(TreningsOkt treningsOkt, Ovelse ovelse) throws NoSuchMethodException,
+    public static OvelseTilhorlighet getByObjects(TreningsOkt treningsOkt, Ovelse ovelse) throws NoSuchMethodException,
             IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
             InvocationTargetException {
         return getByIds(treningsOkt.getId(), ovelse.getId());
     }
 
-    public static OvelseMaal getByIds(int treningsOktId, int ovelseId) throws NoSuchMethodException,
+    public static OvelseTilhorlighet getByIds(int treningsOktId, int ovelseId) throws NoSuchMethodException,
             IllegalAccessException, InstantiationException, SQLException, DataItemNotFoundException,
             InvocationTargetException {
-        return (OvelseMaal) DataGetters.getByTwoFields(
+        return (OvelseTilhorlighet) DataGetters.getByTwoFields(
                 "TreningsOktId",
                 "OvelseId",
                 int.class,
                 int.class,
-                OvelseMaal.class,
+                OvelseTilhorlighet.class,
                 treningsOktId,
                 ovelseId
         );
@@ -89,7 +89,7 @@ public class OvelseTilhorlighet implements DataTable {
         Set<Object> objects = DataGetters.getByMultiple(
                 "TreningsOktId",
                 int.class,
-                OvelseMaal.class,
+                OvelseTilhorlighet.class,
                 treningsOktId
         );
         Iterator<Object> iterator = objects.iterator();
@@ -112,7 +112,7 @@ public class OvelseTilhorlighet implements DataTable {
         Set<Object> objects = DataGetters.getByMultiple(
                 "OvelseId",
                 int.class,
-                OvelseMaal.class,
+                OvelseTilhorlighet.class,
                 ovelseId
         );
         Iterator<Object> iterator = objects.iterator();

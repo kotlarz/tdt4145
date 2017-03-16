@@ -2,11 +2,11 @@ package treningsdagbok.database;
 
 import treningsdagbok.utils.TimeUtils;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,5 +97,21 @@ public class DataManager {
         }
         LOGGER.fine("Took " + new TimeUtils((System.currentTimeMillis() - start) / 1000).toString() +
                 " to establish a connection for 'H2'.");
+    }
+
+    public boolean tablesExists(List<String> tables) throws SQLException {
+        final List<String> tableNames = new ArrayList<>();
+
+        final Statement st = this.getConnection().createStatement();
+        final ResultSet rs = st.executeQuery("SHOW TABLES");
+        while (rs.next()) {
+            tableNames.add(rs.getString("TABLE_NAME").toLowerCase());
+        }
+        rs.close();
+        st.close();
+
+        Collections.sort(tableNames);
+        Collections.sort(tables);
+        return tableNames.equals(tables);
     }
 }

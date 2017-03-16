@@ -23,7 +23,7 @@ public class OvelseResultat implements DataTable {
     @TableColumn(length = 6, foreignKey={"ovelse", "id"}, identifier = true)
     private int ovelseId;
 
-    @TableColumn(length = 15, nullable = true, dataType = String.class)
+    @TableColumn(length = 15, nullable = true)
     private Belastning belastning;
 
     @TableColumn(length = 3)

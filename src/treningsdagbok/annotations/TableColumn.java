@@ -17,7 +17,4 @@ public @interface TableColumn {
     int precision() default 0;
     int scale() default 0;
     String[] foreignKey() default {};
-    Class dataType() default DEFAULT.class;
-
-    static final class DEFAULT {}
 }

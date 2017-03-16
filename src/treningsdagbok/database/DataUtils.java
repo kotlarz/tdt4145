@@ -2,6 +2,8 @@ package treningsdagbok.database;
 
 import treningsdagbok.TreningsDagbok;
 import treningsdagbok.annotations.TableColumn;
+import treningsdagbok.enums.Belastning;
+import treningsdagbok.enums.VaerType;
 import treningsdagbok.utils.JavaUtils;
 
 import java.lang.reflect.Field;
@@ -113,9 +115,6 @@ public class DataUtils {
 
             // Set the data type of the database field (String, int, etc.).
             Class fieldType = field.getType();
-            if (!TableColumn.DEFAULT.class.isAssignableFrom(column.dataType())) {
-                fieldType = column.dataType();
-            }
 
             // Since the field is accessible we can grab its value.
             Object value = field.get(objectInstance);
@@ -211,9 +210,6 @@ public class DataUtils {
 
                 // Set the data type of the database field (String, int, etc.).
                 Class fieldType = field.getType();
-                if (!TableColumn.DEFAULT.class.isAssignableFrom(column.dataType())) {
-                    fieldType = column.dataType();
-                }
 
                 // Since the field is accessible we can grab its value.
                 Object value = field.get(objectInstance);
@@ -262,9 +258,6 @@ public class DataUtils {
 
             // Set the data type of the database field (String, int, etc.).
             Class fieldType = field.getType();
-            if (!TableColumn.DEFAULT.class.isAssignableFrom(column.dataType())) {
-                fieldType = column.dataType();
-            }
 
             // Set the name of the setter method.
             // Example: "numberOfAccounts()" => "setNumberOfAccounts()"
@@ -276,7 +269,10 @@ public class DataUtils {
             method.setAccessible(true);
 
             // Execute the setter method.
-            if (String.class.isAssignableFrom(fieldType)) {
+            if (Belastning.class.isAssignableFrom(fieldType) || VaerType.class.isAssignableFrom(fieldType)) {
+                // TODO: fix
+                method.invoke(object, resultSet.getString(name));
+            } else if (String.class.isAssignableFrom(fieldType)) {
                 method.invoke(object, resultSet.getString(name));
             } else if (int.class.isAssignableFrom(fieldType)) {
                 method.invoke(object, resultSet.getInt(name));
@@ -329,9 +325,6 @@ public class DataUtils {
 
             // Set the data type of the database field (String, int, etc.).
             Class fieldType = field.getType();
-            if (!TableColumn.DEFAULT.class.isAssignableFrom(column.dataType())) {
-                fieldType = column.dataType();
-            }
 
             // Set the length (i.e. INT(6), where 6 is the length) if the TableColumn has it specified.
             String length = "";
@@ -342,7 +335,9 @@ public class DataUtils {
             // Set the actual SQL data type of the column.
             // Reset the length if the data type field does not support it.
             String type = null;
-            if (String.class.isAssignableFrom(fieldType)) {
+            if (Belastning.class.isAssignableFrom(fieldType) || VaerType.class.isAssignableFrom(fieldType)) {
+                type = "VARCHAR";
+            } else if (String.class.isAssignableFrom(fieldType)) {
                 if (column.length() == 0) {
                     type = "TEXT";
                 } else {
@@ -444,7 +439,9 @@ public class DataUtils {
     public static PreparedStatement setParameterValue(PreparedStatement ps, Class fieldType,
                                                       int parameterIndex, Object value) throws SQLException {
         // Set the value for each parameter index.
-        if (String.class.isAssignableFrom(fieldType)) {
+        if (Belastning.class.isAssignableFrom(fieldType) || VaerType.class.isAssignableFrom(fieldType)) {
+            ps.setString(parameterIndex, ((Enum) value).name());
+        } else if (String.class.isAssignableFrom(fieldType)) {
             ps.setString(parameterIndex, (String) value);
         } else if (int.class.isAssignableFrom(fieldType)) {
             ps.setInt(parameterIndex, (int) value);

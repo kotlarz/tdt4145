@@ -15,9 +15,6 @@ import java.sql.SQLException;
 import java.sql.Time;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.Set;
 
 @Table
 public class UtendorsTrening extends TreningsOkt implements DataTable {
@@ -27,7 +24,7 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
     @TableColumn(precision = 3, scale = 1)
     private float temperatur;
 
-    @TableColumn(length = 16, dataType = String.class)
+    @TableColumn(length = 16)
     private VaerType vaerType;
 
     public UtendorsTrening() {}
@@ -61,6 +58,18 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
 
     @Override
     public void create() throws SQLException, IllegalAccessException {
+        // Workaround
+        /*
+        TreningsOkt treningsOkt = new TreningsOkt(
+                this.getDato(),
+                this.getTidspunkt(),
+                this.getVarighet(),
+                this.getForm(),
+                this.getPrestasjon(),
+                this.getNotat(),
+                this.getErUtendors()
+        );
+        treningsOkt.create();*/
         super.create();
         this.treningsOktId = super.getId();
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(UtendorsTrening.class, this);

@@ -50,9 +50,9 @@ public class TreningsOkt implements DataTableWithId {
 
     private Map<Integer, Set<OvelseResultat>> ovelseResultater;
 
-    protected TreningsOkt() {}
+    public TreningsOkt() {}
 
-    protected TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
+    public TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
                        int form, int prestasjon, String notat, int erUtendors) {
         this.dato = dato;
         this.tidspunkt = tidspunkt;
@@ -132,6 +132,16 @@ public class TreningsOkt implements DataTableWithId {
 
     public void setErUtendors(int erUtendors) {
         this.erUtendors = erUtendors;
+    }
+
+    @Override
+    public String toString() {
+        return "[TreningsOkt"
+                + " | id=" + this.id
+                + " | dato=" + this.dato.toString()
+                + " | tidspunkt=" + this.tidspunkt.toString()
+                + " | utendørs = " + (this.isUtendors() ? "ja" : "nei")
+                + "]";
     }
 
     public void create() throws SQLException, IllegalAccessException {

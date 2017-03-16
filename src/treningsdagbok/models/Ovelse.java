@@ -39,6 +39,14 @@ public class Ovelse implements DataTableWithId {
         this.kategorier = null;
     }
 
+    @Override
+    public String toString() {
+        return "[Ovelse"
+                + " | id=" + this.id
+                + " | navn=" + this.navn
+                + " | beskrivelse=" + this.beskrivelse + "]";
+    }
+
     public int getId() {
         return id;
     }
