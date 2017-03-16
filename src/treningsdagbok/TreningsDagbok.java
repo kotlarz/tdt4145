@@ -30,32 +30,35 @@ public class TreningsDagbok {
     private static void startScanner() {
         while (true) {
             System.out.println("Hva vil du?");
-            System.out.println("1: Legg til økt.");
-            System.out.println("2: Slett økt.");
-            System.out.println("3: Legg til øvelse.");
+            System.out.println("1: Legg til øvelse.");
+            System.out.println("2: Slett øvelse.");
+            System.out.println("3: Legg til økt.");
             System.out.println("4: Beste øvelser siste 3 måneder.");
+            System.out.println(TreningsDagbookScanner.SEPERATOR);
 
             if (scanner.getScanner().hasNextInt()) {
                 int i = scanner.getScanner().nextInt();
+                scanner.getScanner().nextLine(); // There's a left-over newline, consume it.
                 switch (i) {
                     case 1:
-                        scanner.addSession();
+                        scanner.addExercise();
                         break;
                     case 2:
-                        scanner.deleteSession();
+                        scanner.deleteExercise();
                         break;
                     case 3:
-                        scanner.addExercise();
+                        scanner.addSession();
                         break;
                     case 4:
                         //scanner.printBestSession();
                         break;
                     default:
-                        System.out.printf("Kjenner ikke operasjonen");
+                        System.out.println("Kjenner ikke operasjonen, prøv igjen");
                 }
             } else {
                 throw new IllegalArgumentException("Niks.");
             }
+            System.out.println(TreningsDagbookScanner.SEPERATOR);
         }
     }
 

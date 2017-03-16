@@ -2,6 +2,8 @@ package treningsdagbok.program;
 
 import treningsdagbok.enums.VaerType;
 import treningsdagbok.exceptions.DataItemNotFoundException;
+import treningsdagbok.interfaces.DataTable;
+import treningsdagbok.interfaces.DataTableWithId;
 import treningsdagbok.models.InnendorsTrening;
 import treningsdagbok.models.Ovelse;
 import treningsdagbok.models.TreningsOkt;
@@ -13,10 +15,12 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.Locale;
-import java.util.Scanner;
+import java.util.*;
 
 public class TreningsDagbookScanner {
+    public static final String SEPERATOR = "---------------------------------";
+    private static final DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yy");
+    private static final DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm");
     private Scanner scanner;
 
     public TreningsDagbookScanner() {
@@ -45,157 +49,71 @@ public class TreningsDagbookScanner {
         printSession(sessionId);
     }*/
 
-    public void deleteSession() {
-        System.out.println("Hvilken økt vil du slette?");
-        // TODO: list økter
 
-        int id = scanner.nextInt();
-        System.out.println("Er du sikker? (y/n) ");
+    private Ovelse pickExercise() {
+        Set<Ovelse> ovelser = new HashSet<>();
+        Map<Integer, Ovelse> ovelserWithKeys = new HashMap<>();
+
+        try {
+            ovelser = Ovelse.getAll();
+        } catch (NoSuchMethodException | InstantiationException | IllegalAccessException | SQLException
+                | InvocationTargetException | DataItemNotFoundException e) {
+            System.out.println("Klarte ikke hente øvelser: " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        if (ovelser.isEmpty()) {
+            System.out.println("Fant ingen øvelser, du må legge til noen.");
+            return null;
+        }
+
+        for (Ovelse ovelse : ovelser) {
+            System.out.println("#" + ovelse.getId() + " - " + ovelse.getNavn());
+            ovelserWithKeys.put(ovelse.getId(), ovelse);
+        }
+
         while (true) {
-            if (scanner.hasNext()) {
-                if (scanner.next().equalsIgnoreCase("y")) {
-                    try {
-                        TreningsOkt treningsOkt = TreningsOkt.getById(id);
-                        if (treningsOkt.isUtendors()) {
-                            UtendorsTrening utendorsTrening = UtendorsTrening.getById(treningsOkt.getId());
-                            utendorsTrening.delete();
-                        } else {
-                            InnendorsTrening innendorsTrening = InnendorsTrening.getById(treningsOkt.getId());
-                            innendorsTrening.delete();
-                        }
-                    } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-                        e.printStackTrace();
-                    } catch (SQLException e) {
-                        System.out.println("Klarte ikke slette treningsøkten grunnet feil i SQL spørringen, se feilmelding under.");
-                        e.printStackTrace();
-                    } catch (DataItemNotFoundException e) {
-                        System.out.println("Fant ingen treningsøkt med den ID-en");
-                        e.printStackTrace();
-                    }
-
-                    System.out.println("Treningsøkt med ID #" + id + " ble slettet.");
-                } else if (scanner.next().equalsIgnoreCase("n")) {
-                    break;
-                } else {
-                    System.out.println("Skriv y eller n, skjønte ikke hva du mente.");
-                }
+            Integer tempId = readData("Velg en øvelse", Integer.class);
+            if (ovelserWithKeys.containsKey(tempId)) {
+                return ovelserWithKeys.get(tempId);
             }
+            System.out.println("Denne ID-en finnes ikke, prøv igjen.");
+        }
+    }
+
+    public void addExercise() {
+        System.out.println("Legg til øvelse:");
+
+        String navn = readData("Navn", String.class);
+        String beskrivelse = readData("Beskrivelse", String.class);
+
+        Ovelse ovelse = new Ovelse(navn, beskrivelse);
+        createObject(ovelse);
+    }
+
+    public void deleteExercise() {
+        // TODO;
+        Ovelse ovelse = pickExercise();
+        if (ovelse != null) {
+
         }
     }
     
     public void addSession() {
         System.out.println("Legg til treningsøkt:");
 
-        System.out.println("Utendørs (y/n[*]): ");
-        boolean isUtendors = scanner.next().equalsIgnoreCase("y");
+        boolean isUtendors = getYesNoInput("Utendørs");
 
-        LocalDate dato;
-        LocalTime tidspunkt;
-        int varighet;
-        int form;
-        int prestasjon;
-        String notat;
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/mm/yy");
-
-        while (true) {
-            System.out.println("Dato (dd/mm/yy): ");
-
-            if (scanner.hasNext()) {
-                try {
-                    dato = LocalDate.parse(scanner.next(), formatter);
-                    break;
-                } catch (DateTimeParseException e) {
-                    System.out.println("Kjenner ikke til formatet.");
-                }
-            }
-            System.out.println("Prøv igjen");
-        }
-        
-        while (true) {
-            System.out.println("Tidspunkt (hh:mm): ");
-
-            if (scanner.hasNextLine()) {
-                try {
-                    tidspunkt = LocalTime.parse(scanner.nextLine());
-                    break;
-                } catch (DateTimeParseException e) {
-                    System.out.println("Kjenner ikke til formatet.");
-                }
-            }
-            System.out.println("Prøv igjen");
-        }
-        
-        while (true) {
-            System.out.println("Varighet: ");
-            if (scanner.hasNextInt()) {
-                varighet = scanner.nextInt();
-                break;
-            }
-            System.out.println("Prøv igjen");
-        }
-        
-        while (true) {
-            System.out.println("Form: ");
-            if (scanner.hasNextInt()) {
-                form = scanner.nextInt();
-                break;
-            }
-            System.out.println("Prøv igjen");            
-        }
-        
-        while (true) {
-            System.out.println("Prestasjon: ");
-            if (scanner.hasNextInt()) {
-                prestasjon = scanner.nextInt();
-                break;
-            }
-            System.out.println("Prøv igjen");
-        }
-        
-        while (true) {
-            System.out.println("Notat: ");
-            if (scanner.hasNextLine()) {
-                notat = scanner.nextLine();
-                break;
-            }
-            System.out.println("Prøv igjen");
-        }
+        LocalDate dato = readData("Dato (dd/mm/yy)", LocalDate.class);
+        LocalTime tidspunkt = readData("Tidspunkt (hh:mm)", LocalTime.class);
+        int varighet = readData("Varighet (minutter)", int.class) * 60;
+        int form = readData("Form (1-10)", int.class);
+        int prestasjon = readData("Prestasjon (1-10)", int.class);
+        String notat = readData("Notat", String.class);
 
         if (isUtendors) {
-            float temperatur;
-            VaerType vaerType;
-
-            String vaerTypeOptions = "";
-            int i = 1;
-            for (VaerType vaerTypeOption : VaerType.values()) {
-                vaerTypeOptions += vaerTypeOption.name() + (i++ != VaerType.values().length ? "," : "");
-            }
-
-            while (true) {
-                System.out.println("Temperatur: ");
-                if (scanner.hasNextFloat()) {
-                    temperatur = scanner.nextFloat();
-                    break;
-                } else if (scanner.hasNextInt()) {
-                    temperatur = (float) scanner.nextInt();
-                    break;
-                }
-                System.out.println("Prøv igjen");
-            }
-
-            while (true) {
-                System.out.println("Værtype (" + vaerTypeOptions + "): ");
-                if (scanner.hasNextLine()) {
-                    String inputString = scanner.next();
-                    VaerType tempVaerType = VaerType.valueOf(inputString);
-                    // TODO: error if invalid vær type
-                    System.out.println(tempVaerType);
-                    vaerType = tempVaerType;
-                    break;
-                }
-                System.out.println("Prøv igjen");
-            }
+            float temperatur = readData("Temperatur", float.class);
+            VaerType vaerType = readData("Værtype (" + VaerType.getOptions() + ")", VaerType.class);
 
             UtendorsTrening utendorsTrening = new UtendorsTrening(
                     dato,
@@ -208,40 +126,10 @@ public class TreningsDagbookScanner {
                     vaerType
             );
 
-            try {
-                utendorsTrening.create();
-                System.out.println("Opprettet ny utendørs trenings med ID #" + utendorsTrening.getId());
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            } catch (SQLException e) {
-                System.out.println("Klarte ikke opprette treningsøkten grunnet feil i SQL spørringen, se feilmelding under.");
-                e.printStackTrace();
-            }
+            createObject(utendorsTrening);
         } else {
-            float luftkvalitet;
-            int antallTilskuere;
-
-
-            while (true) {
-                System.out.println("Luftkvalitet: ");
-                if (scanner.hasNextFloat()) {
-                    luftkvalitet = scanner.nextFloat();
-                    break;
-                } else if (scanner.hasNextInt()) {
-                    luftkvalitet = (float) scanner.nextInt();
-                    break;
-                }
-                System.out.println("Prøv igjen");
-            }
-
-            while (true) {
-                System.out.println("Antall tilskuere: ");
-                if (scanner.hasNextInt()) {
-                    antallTilskuere = scanner.nextInt();
-                    break;
-                }
-                System.out.println("Prøv igjen");
-            }
+            float luftkvalitet = readData("Luftkvalitet", float.class);
+            int antallTilskuere = readData("Antall tilskuere: ", int.class);
 
             InnendorsTrening innendorsTrening = new InnendorsTrening(
                     dato,
@@ -253,57 +141,118 @@ public class TreningsDagbookScanner {
                     luftkvalitet,
                     antallTilskuere
             );
+            createObject(innendorsTrening);
+        }
 
+        // TODO: add results
+    }
+
+    public void deleteSession() {
+        System.out.println("Hvilken økt vil du slette?");
+        // TODO: list økter
+
+        int id = scanner.nextInt();
+
+        // Check if exsists
+
+        if (getYesNoInput("Er du sikker?")) {
             try {
-                innendorsTrening.create();
-                System.out.println("Opprettet ny innendørs trenings med ID #" + innendorsTrening.getId());
-            } catch (IllegalAccessException e) {
+                TreningsOkt treningsOkt = TreningsOkt.getById(id);
+
+                // TODO: delete results
+            } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
                 e.printStackTrace();
             } catch (SQLException e) {
-                System.out.println("Klarte ikke opprette treningsøkten grunnet feil i SQL spørringen, se feilmelding under.");
+                System.out.println("Klarte ikke slette treningsøkten grunnet feil i SQL spørringen, se feilmelding under.");
+                e.printStackTrace();
+            } catch (DataItemNotFoundException e) {
+                System.out.println("Fant ingen treningsøkt med den ID-en");
                 e.printStackTrace();
             }
         }
     }
 
-
-    public void addExercise() {
-        System.out.println("Legg til øvelse:");
-
-        String navn;
-        String beskrivelse;
-
+    private boolean getYesNoInput(String text) {
+        System.out.println(text + " (y/n): ");
         while (true) {
-            System.out.println("Navn: ");
-            if (scanner.hasNextLine()) {
-                navn = scanner.nextLine();
-                break;
+            if (scanner.hasNext()) {
+                if (scanner.next().equalsIgnoreCase("y")) {
+                    return true;
+                } else if (scanner.next().equalsIgnoreCase("n")) {
+                    return false;
+                } else {
+                    System.out.println("Skriv y eller n, skjønte ikke hva du mente.");
+                }
+            }
+        }
+    }
+
+    private <T> T readData(String text, Class<T> dataClass) {
+        while (true) {
+            System.out.println(SEPERATOR);
+            System.out.println(text + ": ");
+            if (String.class.isAssignableFrom(dataClass)) {
+                if (scanner.hasNextLine()) {
+                    String next = scanner.nextLine();
+                    if (!next.isEmpty()) {
+                        return dataClass.cast(next);
+                    }
+                }
+            } else if (Integer.class.isAssignableFrom(dataClass)) {
+                if (scanner.hasNextInt()) {
+                    return dataClass.cast(scanner.nextInt());
+                }
+            } else if (float.class.isAssignableFrom(dataClass)) {
+                if (scanner.hasNext() && scanner.hasNextFloat()) {
+                    return dataClass.cast(scanner.nextFloat());
+                }
+            } else if (LocalDate.class.isAssignableFrom(dataClass)) {
+                if (scanner.hasNext()) {
+                    try {
+                        return dataClass.cast(LocalDate.parse(scanner.next(), dateFormatter));
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Kjenner ikke til formatet.");
+                    }
+                }
+            } else if (LocalTime.class.isAssignableFrom(dataClass)) {
+                if (scanner.hasNext()) {
+                    try {
+                        return dataClass.cast(LocalTime.parse(scanner.next(), timeFormatter));
+                    } catch (DateTimeParseException e) {
+                        System.out.println("Kjenner ikke til formatet.");
+                    }
+                }
+            } else if (VaerType.class.isAssignableFrom(dataClass)) {
+                if (scanner.hasNext()) {
+                    String inputString = scanner.next();
+                    try {
+                        return dataClass.cast(VaerType.valueOf(inputString));
+                    } catch (Exception ignore) {
+                    }
+                }
             }
             System.out.println("Prøv igjen");
         }
-        
-        while (true) {
-            System.out.println("Beskrivelse: ");
-            if (scanner.hasNextLine()) {
-                beskrivelse = scanner.nextLine();
-                break;
+    }
+
+    private void createObject(DataTable object) {
+        boolean created = false;
+        while (!created) {
+            try {
+                object.create();
+                if (object instanceof DataTableWithId) {
+                    System.out.println("Opprettet et nytt objekt med ID #" + ((DataTableWithId) object).getId());
+                } else {
+                    System.out.println("Opprettet et nytt objekt i databasen.");
+                }
+                created = true;
+            } catch (SQLException e) {
+                System.out.println("Klarte ikke opprette objektet grunnet feil i SQL spørringen, se feilmelding under.");
+                e.printStackTrace();
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
             }
-            System.out.println("Prøv igjen");            
         }
-
-        Ovelse ovelse = new Ovelse(navn, beskrivelse);
-
-        try {
-            ovelse.create();
-            System.out.println("Opprettet ny øvelse med ID #" + ovelse.getId());
-        } catch (SQLException e) {
-            System.out.println("Klarte ikke opprette øvelsen grunnet feil i SQL spørringen, se feilmelding under.");
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        // TODO: add results/goals [resultater/mål]
     }
 
 }

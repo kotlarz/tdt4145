@@ -22,7 +22,9 @@ public class OvelseTilhorlighet implements DataTable {
     @TableColumn(length = 6, foreignKey = {"ovelse", "id"}, identifier = true)
     private int ovelseId;
 
-    OvelseTilhorlighet(TreningsOkt treningsOkt, Ovelse ovelse) {
+    public OvelseTilhorlighet() {}
+
+    public OvelseTilhorlighet(TreningsOkt treningsOkt, Ovelse ovelse) {
         this.treningsOktId = treningsOkt.getId();
         this.ovelseId = ovelse.getId();
     }

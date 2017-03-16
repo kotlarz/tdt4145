@@ -1,7 +1,6 @@
 package treningsdagbok.database;
 
-import treningsdagbok.TreningsDagbok;
-import treningsdagbok.utils.TimeUtil;
+import treningsdagbok.utils.TimeUtils;
 
 import java.sql.Connection;
 import java.sql.Driver;
@@ -87,16 +86,16 @@ public class DataManager {
             this.startup = System.currentTimeMillis() / 1000;
         } catch (ClassNotFoundException e) {
             LOGGER.severe("Could not connect to the database due to no driver could be found for 'H2'.");
-            LOGGER.fine("Connection attempt took " + new TimeUtil((System.currentTimeMillis() - start) / 1000).toString() + ".");
+            LOGGER.fine("Connection attempt took " + new TimeUtils((System.currentTimeMillis() - start) / 1000).toString() + ".");
             e.printStackTrace();
             return;
         } catch (SQLException e) {
             LOGGER.severe("Could not connect to the database for 'H2' due to a SQL Exception.");
-            LOGGER.fine("Connection attempt took " + new TimeUtil((System.currentTimeMillis() - start) / 1000).toString() + ".");
+            LOGGER.fine("Connection attempt took " + new TimeUtils((System.currentTimeMillis() - start) / 1000).toString() + ".");
             e.printStackTrace();
             return;
         }
-        LOGGER.fine("Took " + new TimeUtil((System.currentTimeMillis() - start) / 1000).toString() +
+        LOGGER.fine("Took " + new TimeUtils((System.currentTimeMillis() - start) / 1000).toString() +
                 " to establish a connection for 'H2'.");
     }
 }

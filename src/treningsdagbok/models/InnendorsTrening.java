@@ -23,6 +23,8 @@ public class InnendorsTrening extends TreningsOkt implements DataTable {
     @TableColumn(length = 6)
     private int antallTilskuere;
 
+    public InnendorsTrening() {}
+
     public InnendorsTrening(LocalDate dato, LocalTime tidspunkt, int varighet, int form, int prestasjon, String notat,
                             float luftkvalitet, int antallTilskuere) {
         super(dato, tidspunkt, varighet, form, prestasjon, notat, 0);

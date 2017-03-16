@@ -6,6 +6,7 @@ import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
 import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
+import treningsdagbok.interfaces.DataTableWithId;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
@@ -16,7 +17,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 @Table
-public class TreningsMal implements DataTable {
+public class TreningsMal implements DataTableWithId {
     @TableColumn(length = 6, primaryKey = true, autoIncrement = true)
     private int id;
 
@@ -25,6 +26,8 @@ public class TreningsMal implements DataTable {
 
     @TableColumn(length = 30)
     private String navn;
+
+    public TreningsMal() {}
 
     public TreningsMal(TreningsOkt treningsOkt, String navn) {
         this.treningsOktId = treningsOkt.getId();

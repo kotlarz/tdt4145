@@ -7,6 +7,7 @@ import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
 import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
+import treningsdagbok.interfaces.DataTableWithId;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
@@ -16,7 +17,7 @@ import java.util.*;
 import java.util.logging.Logger;
 
 @Table
-public class TreningsOkt implements DataTable {
+public class TreningsOkt implements DataTableWithId {
     private static final Logger LOGGER = Logger.getLogger(TreningsOkt.class.getName());
 
     @TableColumn(length = 6, primaryKey = true, autoIncrement = true)

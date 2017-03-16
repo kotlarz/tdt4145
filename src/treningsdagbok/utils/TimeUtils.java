@@ -3,7 +3,7 @@ package treningsdagbok.utils;
 import java.util.Arrays;
 import java.util.List;
 
-public class TimeUtil {
+public class TimeUtils {
     private final TimeUnit unit;
     private final int amount;
 
@@ -58,27 +58,27 @@ public class TimeUtil {
         }
     }
 
-    public TimeUtil(int seconds) {
+    public TimeUtils(int seconds) {
         this.unit = TimeUnit.SECOND;
         this.amount = seconds;
     }
 
-    public TimeUtil(long seconds) {
+    public TimeUtils(long seconds) {
         this((int) seconds);
     }
 
-    public TimeUtil(String timeString) {
+    public TimeUtils(String timeString) {
         String[] split = timeString.split(" ");
         this.amount = Integer.parseInt(split[0]);
         this.unit = TimeUnit.getUnit(split[1].toLowerCase());
     }
 
-    public TimeUtil(int amount, TimeUnit unit) {
+    public TimeUtils(int amount, TimeUnit unit) {
         this.amount = amount;
         this.unit = unit;
     }
 
-    public TimeUtil(int amount, String unit) {
+    public TimeUtils(int amount, String unit) {
         this.amount = amount;
         this.unit = TimeUnit.getUnit(unit.toLowerCase());
     }

@@ -6,6 +6,7 @@ import treningsdagbok.database.DataGetters;
 import treningsdagbok.database.DataUtils;
 import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.interfaces.DataTable;
+import treningsdagbok.program.TreningsDagbookScanner;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.PreparedStatement;
@@ -34,6 +35,8 @@ public class TreningsData implements DataTable {
 
     @TableColumn(length = 4, nullable = true)
     private int moh;
+
+    public TreningsData() {}
 
     public TreningsData(TreningsOkt treningsOkt, LocalDateTime tid, int puls,
                         float lengdegrad, float breddegrad, int moh) {

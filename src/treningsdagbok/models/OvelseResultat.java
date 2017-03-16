@@ -32,6 +32,8 @@ public class OvelseResultat implements DataTable {
     @TableColumn(length = 3)
     private int antallSett;
 
+    public OvelseResultat() {}
+
     public OvelseResultat(TreningsOkt treningsOkt, Ovelse ovelse, Belastning belastning, int antallRepetisjoner,
                           int antallSett) {
         this.treningsOktId = treningsOkt.getId();

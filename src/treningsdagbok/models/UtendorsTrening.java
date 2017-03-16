@@ -30,6 +30,8 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
     @TableColumn(length = 16, dataType = String.class)
     private VaerType vaerType;
 
+    public UtendorsTrening() {}
+
     public UtendorsTrening(LocalDate dato, LocalTime tidspunkt, int varighet, int form, int prestasjon, String notat,
                            float temperatur, VaerType vaerType) {
         super(dato, tidspunkt, varighet, form, prestasjon, notat, 1);
