@@ -34,12 +34,24 @@ public class InnendorsTrening extends TreningsOkt implements DataTable {
 
     public int getTreningsOktId() { return treningsOktId; }
 
+    public void setTreningsOktId(int treningsOktId) {
+        this.treningsOktId = treningsOktId;
+    }
+
     public float getLuftkvalitet() {
         return luftkvalitet;
     }
 
+    public void setLuftkvalitet(float luftkvalitet) {
+        this.luftkvalitet = luftkvalitet;
+    }
+
     public int getAntallTilskuere() {
         return antallTilskuere;
+    }
+
+    public void setAntallTilskuere(int antallTilskuere) {
+        this.antallTilskuere = antallTilskuere;
     }
 
     @Override

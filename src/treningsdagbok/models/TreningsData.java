@@ -52,6 +52,10 @@ public class TreningsData implements DataTable {
         return treningsOktId;
     }
 
+    public void setTreningsOktId(int treningsOktId) {
+        this.treningsOktId = treningsOktId;
+    }
+
     public LocalDateTime getTid() {
         return tid;
     }

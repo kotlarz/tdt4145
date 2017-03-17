@@ -2,10 +2,16 @@ package treningsdagbok;
 
 import treningsdagbok.database.DataManager;
 import treningsdagbok.database.DataUtils;
+import treningsdagbok.enums.Belastning;
+import treningsdagbok.enums.VaerType;
+import treningsdagbok.exceptions.DataItemNotFoundException;
 import treningsdagbok.models.*;
 import treningsdagbok.program.TreningsDagbookScanner;
 
+import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,15 +39,15 @@ public class TreningsDagbok {
     );
 
     public static void main(String[] args) {
-        // TODO: connect to DataManager
         dataManager = new DataManager("localhost", "treningsdagbok");
         dataManager.connect("treningsdagbok", "treningsdagbok");
         try {
+            //dropDatabase();
             createDatbaseIfNotExists();
+            //insertTestData();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
         startScanner();
     }
 
@@ -140,5 +146,132 @@ public class TreningsDagbok {
         PreparedStatement ps = getDataManager().getConnection().prepareStatement("DROP ALL OBJECTS");
         ps.executeUpdate();
         ps.close();
+    }
+
+    private static void insertTestData() {
+        try {
+            // Øvelser
+            Ovelse fotballOvelse = new Ovelse(
+                    "Fotball",
+                    "Kjempe fin beskrivelse"
+            );
+            fotballOvelse.create();
+
+            Ovelse lopeOvelse = new Ovelse(
+                    "Løping",
+                    "Løpe øvelse"
+            );
+            lopeOvelse.create();
+
+            Ovelse hangupsOvelse = new Ovelse(
+                    "Hangups",
+                    "Veldig tung øvelse"
+            );
+            hangupsOvelse.create();
+
+            // Utendørs treninger
+            UtendorsTrening utendorsTrening1 = new UtendorsTrening(
+                    LocalDate.now(),
+                    LocalTime.now(),
+                    30,
+                    9,
+                    6,
+                    "Bra form på treningen, dårlig prestasjon, var fint vær.",
+                    (float) 24.3,
+                    VaerType.SOL
+            );
+            utendorsTrening1.create();
+            utendorsTrening1.addOvelse(fotballOvelse);
+            OvelseResultat ovelseResultat1 = new OvelseResultat(
+                    utendorsTrening1,
+                    fotballOvelse,
+                    Belastning.MIDDELS,
+                    1,
+                    1
+            );
+            ovelseResultat1.create();
+            utendorsTrening1.addOvelseResultat(fotballOvelse, ovelseResultat1);
+
+            UtendorsTrening utendorsTrening2 = new UtendorsTrening(
+                    LocalDate.now(),
+                    LocalTime.now(),
+                    45,
+                    3,
+                    8,
+                    "Dårlig form, men god prestasjon, det regnet.",
+                    (float) 22.3,
+                    VaerType.REGN
+            );
+            utendorsTrening2.create();
+            utendorsTrening2.addOvelse(fotballOvelse);
+            OvelseResultat ovelseResultat2 = new OvelseResultat(
+                    utendorsTrening2,
+                    lopeOvelse,
+                    Belastning.HØY,
+                    1,
+                    3
+            );
+            ovelseResultat2.create();
+            utendorsTrening2.addOvelseResultat(lopeOvelse, ovelseResultat1);
+
+            // Innendørs treninger
+            InnendorsTrening innendorsTrening1 = new InnendorsTrening(
+                    LocalDate.now(),
+                    LocalTime.now(),
+                    30,
+                    9,
+                    6,
+                    "Bra form på treningen, dårlig prestasjon.",
+                    (float) 89.4,
+                    40
+            );
+            innendorsTrening1.create();
+            innendorsTrening1.addOvelse(lopeOvelse);
+            OvelseResultat ovelseResultat3 = new OvelseResultat(
+                    innendorsTrening1,
+                    lopeOvelse,
+                    Belastning.MIDDELS,
+                    1,
+                    3
+            );
+            ovelseResultat3.create();
+            innendorsTrening1.addOvelseResultat(lopeOvelse, ovelseResultat3);
+            innendorsTrening1.addOvelse(fotballOvelse);
+            OvelseResultat ovelseResultat4 = new OvelseResultat(
+                    innendorsTrening1,
+                    fotballOvelse,
+                    Belastning.HØY,
+                    1,
+                    1
+            );
+            ovelseResultat4.create();
+            innendorsTrening1.addOvelseResultat(fotballOvelse, ovelseResultat4);
+
+            InnendorsTrening innendorsTrening2 = new InnendorsTrening(
+                    LocalDate.now(),
+                    LocalTime.now(),
+                    45,
+                    3,
+                    8,
+                    "Dårlig form, men god prestasjon, det regnet.",
+                    (float) 89.4,
+                    600
+            );
+            innendorsTrening2.create();
+            innendorsTrening2.addOvelse(hangupsOvelse);
+            OvelseResultat ovelseResultat5 = new OvelseResultat(
+                    innendorsTrening2,
+                    hangupsOvelse,
+                    Belastning.HØY,
+                    10,
+                    3
+            );
+            ovelseResultat5.create();
+            innendorsTrening2.addOvelseResultat(hangupsOvelse, ovelseResultat5);
+        } catch (Exception e) {
+            System.out.println("Klarte ikke sette inn test data:");
+            e.printStackTrace();
+        }
+
     }
 }

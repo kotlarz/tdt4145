@@ -269,9 +269,10 @@ public class DataUtils {
             method.setAccessible(true);
 
             // Execute the setter method.
-            if (Belastning.class.isAssignableFrom(fieldType) || VaerType.class.isAssignableFrom(fieldType)) {
-                // TODO: fix
-                method.invoke(object, resultSet.getString(name));
+            if (Belastning.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, Belastning.valueOf(resultSet.getString(name)));
+            } else if (VaerType.class.isAssignableFrom(fieldType)) {
+                method.invoke(object, VaerType.valueOf(resultSet.getString(name)));
             } else if (String.class.isAssignableFrom(fieldType)) {
                 method.invoke(object, resultSet.getString(name));
             } else if (int.class.isAssignableFrom(fieldType)) {

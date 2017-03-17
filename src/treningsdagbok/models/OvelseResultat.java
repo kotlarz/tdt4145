@@ -47,8 +47,16 @@ public class OvelseResultat implements DataTable {
         return treningsOktId;
     }
 
+    public void setTreningsOktId(int treningsOktId) {
+        this.treningsOktId = treningsOktId;
+    }
+
     public int getOvelseId() {
         return ovelseId;
+    }
+
+    public void setOvelseId(int ovelseId) {
+        this.ovelseId = ovelseId;
     }
 
     public Belastning getBelastning() {

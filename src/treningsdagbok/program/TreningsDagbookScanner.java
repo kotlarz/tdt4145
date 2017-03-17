@@ -296,8 +296,6 @@ public class TreningsDagbookScanner {
         );
 
         createObject(resultat);
-        System.out.println("La til resultat i databasen");
-        /*
         try {
             treningsOkt.addOvelseResultat(ovelse, resultat);
             System.out.println("La til resultat i databasen");
@@ -305,7 +303,7 @@ public class TreningsDagbookScanner {
                 | DataItemNotFoundException | SQLException | InvocationTargetException e) {
             System.out.println("Klarte ikke å legge til Øvelse resultat til treningsøkten:");
             e.printStackTrace();
-        }*/
+        }
     }
 
     public boolean getYesNoInput(String text) {

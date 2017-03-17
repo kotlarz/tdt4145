@@ -112,6 +112,7 @@ public class JavaUtils {
      * @throws IllegalAccessException
      */
     public static Method getMethodFromClass(Class methodClass, String methodName) throws IllegalAccessException {
+        Class initialClass = methodClass;
         while (methodClass != null) {
             Method[] methods = methodClass.getDeclaredMethods();
             for (Method method : methods) {
@@ -121,6 +122,6 @@ public class JavaUtils {
             }
             methodClass = methodClass.getSuperclass();
         }
-        throw new IllegalAccessException("Could not find method '" + methodName + "' in Class '" + methodClass.getName() + "'");
+        throw new IllegalAccessException("Could not find method '" + methodName + "' in Class '" + initialClass.getName() + "'");
     }
 }

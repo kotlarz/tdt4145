@@ -50,7 +50,11 @@ public class TreningsOkt implements DataTableWithId {
 
     private Map<Integer, Set<OvelseResultat>> ovelseResultater;
 
-    public TreningsOkt() {}
+    public TreningsOkt() {
+        this.ovelser = null;
+        this.data = null;
+        this.ovelseResultater = new HashMap<>();
+    }
 
     public TreningsOkt(LocalDate dato, LocalTime tidspunkt, int varighet,
                        int form, int prestasjon, String notat, int erUtendors) {

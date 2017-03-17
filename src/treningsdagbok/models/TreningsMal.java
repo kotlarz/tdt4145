@@ -42,6 +42,10 @@ public class TreningsMal implements DataTableWithId {
         return treningsOktId;
     }
 
+    public void setTreningsOktId(int treningsOktId) {
+        this.treningsOktId = treningsOktId;
+    }
+
     public String getNavn() {
         return navn;
     }

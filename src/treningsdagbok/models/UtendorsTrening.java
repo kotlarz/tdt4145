@@ -40,6 +40,10 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
         return treningsOktId;
     }
 
+    public void setTreningsOktId(int treningsOktId) {
+        this.treningsOktId = treningsOktId;
+    }
+
     public float getTemperatur() {
         return temperatur;
     }
@@ -58,18 +62,6 @@ public class UtendorsTrening extends TreningsOkt implements DataTable {
 
     @Override
     public void create() throws SQLException, IllegalAccessException {
-        // Workaround
-        /*
-        TreningsOkt treningsOkt = new TreningsOkt(
-                this.getDato(),
-                this.getTidspunkt(),
-                this.getVarighet(),
-                this.getForm(),
-                this.getPrestasjon(),
-                this.getNotat(),
-                this.getErUtendors()
-        );
-        treningsOkt.create();*/
         super.create();
         this.treningsOktId = super.getId();
         PreparedStatement ps = DataUtils.generatePrepareStatementInsert(UtendorsTrening.class, this);

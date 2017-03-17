@@ -37,6 +37,7 @@ public class Ovelse implements DataTableWithId {
         this.navn = navn;
         this.beskrivelse = beskrivelse;
         this.kategorier = null;
+        this.resultater = null;
     }
 
     @Override
